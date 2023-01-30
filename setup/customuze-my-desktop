@@ -1,0 +1,160 @@
+#/bin/bash
+
+R="$(printf '\033[1;31m')"
+G="$(printf '\033[1;32m')"
+Y="$(printf '\033[1;33m')"
+W="$(printf '\033[1;37m')"
+C="$(printf '\033[1;36m')"
+
+user=$(whoami)
+
+banner() {
+clear
+printf "\033[33m       █▄▀ ▄▀█ █░░ █   █▀▄▀█ █▀█ █▀▄\033[0m\n"
+printf "\033[36m       █░█ █▀█ █▄▄ █   █░▀░█ █▄█ █▄▀ \033[0m\n"
+printf "\033[32m code by @saba_mdrif \033[0m\n"
+printf "\033[32m subscribe my YouTube Channel Hello Android \033[0m\n"
+
+}
+ 
+checkup() {
+	banner
+if pgrep -x "vncserver" > /dev/null
+then
+	echo "${C}GREAT!"${W}
+	echo "${G}Starting Please Wait"${W}
+else
+    echo "${R}vncserver is not running."${W}
+    echo "${Y} Run Vnc Server First "${W}
+    echo "${R}Exitinng....."${W}
+    sleep 1
+    exit 0
+fi
+
+
+}
+
+setup_plank() {
+	banner
+	gsettings set net.launchpad.plank.dock.settings:/net/launchpad/plank/docks/dock1/ theme 'Gtk+'
+	gsettings set net.launchpad.plank.dock.settings:/net/launchpad/plank/docks/dock1/ zoom-enabled true
+
+}
+
+zsh_setup() {
+	sudo apt install zsh zsh-autosuggestions zsh-syntax-highlighting -y
+    cp /etc/skel/.zshrc ~/
+    sudo chsh -s $(which zsh) $(whoami)
+
+}
+
+ask_theme() {
+read -p "${G}Do you want to setup MacOS themes? (y/n) "${w} answer
+
+if [ "$answer" == "y" ]; then
+	macos_mode
+else
+    echo "${C}Canceling...."${W}
+    sleep 1.5
+fi
+
+}
+
+macos_mode() {
+	banner
+	git clone --depth=1 https://github.com/vinceliuice/WhiteSur-gtk-theme /home/${user}/WhiteSur-gtk-theme
+	sudo chmod +x /home/${user}/WhiteSur-gtk-theme/install.sh
+	sudo bash /home/${user}/WhiteSur-gtk-theme/install.sh
+	git clone --depth=1 https://github.com/vinceliuice/WhiteSur-icon-theme /home/${user}/WhiteSur-icon-theme
+	sudo chmod +x /home/${user}/WhiteSur-icon-theme/install.sh
+	sudo bash /home/${user}/WhiteSur-icon-theme/install.sh
+	sleep 2
+
+dbus-launch xfconf-query -c xfce4-desktop -np '/desktop-icons/style' -t 'int' -s '0'
+sleep3
+dbus-launch xfconf-query -c xsettings -p /Net/ThemeName -s "WhiteSur-Light"
+dbus-launch xfconf-query -c xsettings -p /Net/IconThemeName -s "WhiteSur"
+
+}
+
+app_menu() {
+	banner
+	sudo apt install rofi -y
+	sudo apt install wget -y
+	mkdir -p ~/.config/rofi
+        rofi -dump-config > ~/.config/rofi/config.rasi
+	cd ~
+	wget 
+	wget 
+	mv style.rasi application-menu.png ~/.config/rofi
+	echo "#!/usr/bin/env bash
+
+	## Run
+	rofi \
+    -show drun \
+    -theme /home/${user}/.config/rofi/style.rasi" >> /home/${user}/.config/rofi/launcher.sh
+	touch appsearch.desktop
+echo "[Desktop Entry]
+Name=Application Search
+Exec=bash /home/${user}/.config/rofi/launcher.sh
+Icon=/home/${user}/.config/rofi/application-menu.png
+Type=Application
+Terminal=false
+StartupNotify=false" >> appsearch.desktop
+mkdir ~/.local/share/applications
+mv appsearch.desktop ~/.local/share/applications/
+chmod +x ~/.local/share/applications/appsearch.desktop
+docky add appsearch.desktop
+cp ~/.local/share/applications/appsearch.desktop /home/${user}/Desktop
+touch /home/${user}/.config/plank/dock1/launchers/appsearch.dockitem
+echo "[PlankDockItemPreferences]
+Launcher=file:///home/${user}/.local/share/applications/appsearch.desktop" >> /home/${user}/.config/plank/dock1/launchers/appsearch.dockitem  
+clear 
+echo "${G} setup successfull.."${W}
+
+}
+
+ask_edex() {
+read -p "${G}Do you to install EdexUi? (y/n) "${w} answer
+
+if [ "$answer" == "y" ]; then
+	setup_edex
+else
+    echo "${C}Canceling...."${W}
+    sleep 1.5
+fi
+
+}
+
+setup_edex() {
+	banner
+	cd ~
+	wget
+	wget
+	mv eDEX-UI-Linux-arm64.AppImage /home/${user}/.local/share/applications/
+	mv edex_ui.png /home/${user}/.local/share/applications/
+	touch ~/.local/share/applications/edex-ui.desktop
+	echo " [Desktop Entry]
+	Name=Edex Ui
+	Exec="/home/${user}/.local/share/applications/eDEX-UI-Linux-arm64.AppImage"
+	Icon=/home/${user}/.local/share/applications/edex_ui.png
+	Type=Application
+	Terminal=true
+	StartupNotify=false " >> /home/${user}/.local/share/applications/edex-ui.desktop
+	chmod +x /home/${user}/.local/share/applications/edex-ui.desktop
+
+}
+clean_up{
+     rm -rf /home/${user}/WhiteSur-icon-theme WhiteSur-gtk-theme 
+      clear
+    echo "${C}SUCCESFULL"${W}
+
+}
+
+checkup
+ask_theme
+setup_plank
+zsh_setup
+app_menu
+ask_edex
+clean_up
