@@ -84,8 +84,8 @@ app_menu() {
 	mkdir -p ~/.config/rofi
         rofi -dump-config > ~/.config/rofi/config.rasi
 	cd ~
-	wget 
-	wget 
+	wget https://raw.githubusercontent.com/sabamdarif/modded-kali/main/image/application-menu.png
+	wget https://raw.githubusercontent.com/sabamdarif/modded-kali/main/setup/style.rasi
 	mv style.rasi application-menu.png ~/.config/rofi
 	echo "#!/usr/bin/env bash
 
@@ -115,7 +115,7 @@ echo "${G} setup successfull.."${W}
 }
 
 ask_edex() {
-read -p "${G}Do you to install EdexUi? (y/n) "${w} answer
+read -p "${G}Do you to install EdexUi(Hollywood Style Terminal)? (y/n) "${w} answer
 
 if [ "$answer" == "y" ]; then
 	setup_edex
@@ -129,8 +129,8 @@ fi
 setup_edex() {
 	banner
 	cd ~
-	wget
-	wget
+        wget https://github.com/GitSquared/edex-ui/releases/download/v2.2.8/eDEX-UI-Linux-arm64.AppImage
+	wget https://raw.githubusercontent.com/sabamdarif/modded-kali/main/image/edex_ui.png
 	mv eDEX-UI-Linux-arm64.AppImage /home/${user}/.local/share/applications/
 	mv edex_ui.png /home/${user}/.local/share/applications/
 	touch ~/.local/share/applications/edex-ui.desktop
