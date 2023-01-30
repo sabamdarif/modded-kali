@@ -295,8 +295,8 @@ kfce_mode() {
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
     cd ~
-    wget 
-    mv   /home/${user}
+    wget https://raw.githubusercontent.com/sabamdarif/modded-kali/main/setup/customuze-my-desktop
+    mv customuze-my-desktop  /home/${user}/customuze-my-desktop
 }
 
 gnome_mode() {
