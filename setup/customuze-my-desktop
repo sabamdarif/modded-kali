@@ -16,23 +16,6 @@ printf "\033[32m code by @saba_mdrif \033[0m\n"
 printf "\033[32m subscribe my YouTube Channel Hello Android \033[0m\n"
 
 }
- 
-checkup() {
-	banner
-if pgrep -x "vncserver" > /dev/null
-then
-	echo "${C}GREAT!"${W}
-	echo "${G}Starting Please Wait"${W}
-else
-    echo "${R}vncserver is not running."${W}
-    echo "${Y} Run Vnc Server First "${W}
-    echo "${R}Exitinng....."${W}
-    sleep 1
-    exit 0
-fi
-
-
-}
 
 setup_plank() {
 	banner
@@ -73,7 +56,6 @@ macos_mode() {
 dbus-launch xfconf-query -c xfce4-desktop -np '/desktop-icons/style' -t 'int' -s '0'
 sleep3
 dbus-launch xfconf-query -c xsettings -p /Net/ThemeName -s "WhiteSur-Light"
-dbus-launch xfconf-query -c xsettings -p /Net/IconThemeName -s "WhiteSur"
 
 }
 
@@ -151,7 +133,6 @@ clean_up{
 
 }
 
-checkup
 ask_theme
 setup_plank
 zsh_setup
