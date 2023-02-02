@@ -50,7 +50,7 @@ macos_mode() {
 	sleep 2
 
 dbus-launch xfconf-query -c xfce4-desktop -np '/desktop-icons/style' -t 'int' -s '0'
-sleep3
+sleep 10
 dbus-launch xfconf-query -c xsettings -p /Net/ThemeName -s "WhiteSur-Light"
 
 }
@@ -82,11 +82,13 @@ StartupNotify=false" >> appsearch.desktop
 mkdir ~/.local/share/applications
 mv appsearch.desktop ~/.local/share/applications/
 chmod +x ~/.local/share/applications/appsearch.desktop
-docky add appsearch.desktop
+mkdir /home/${user}/.config/plank/dock1/launchers/
 cp ~/.local/share/applications/appsearch.desktop /home/${user}/Desktop
 touch /home/${user}/.config/plank/dock1/launchers/appsearch.dockitem
-echo "[PlankDockItemPreferences]
-Launcher=file:///home/${user}/.local/share/applications/appsearch.desktop" >> /home/${user}/.config/plank/dock1/launchers/appsearch.dockitem  
+cat > /home/${user}/.config/plank/dock1/launchers/appsearch.dockitem <<- EOF
+[PlankDockItemPreferences]
+Launcher=file:///home/${user}/.local/share/applications/appsearch.desktop
+EOF
 clear 
 echo "${G} setup successfull.."${W}
 
