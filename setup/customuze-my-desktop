@@ -47,6 +47,7 @@ macos_mode() {
 	banner
 	git clone --depth=1 https://github.com/vinceliuice/WhiteSur-gtk-theme /home/${user}/WhiteSur-gtk-theme
 	sudo chmod +x /home/${user}/WhiteSur-gtk-theme/install.sh
+        sudo ./home/${user}/WhiteSur-gtk-theme/install.sh
 	sleep 2
 
 dbus-launch xfconf-query -c xfce4-desktop -np '/desktop-icons/style' -t 'int' -s '0'
