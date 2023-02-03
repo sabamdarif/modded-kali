@@ -84,7 +84,7 @@ mkdir ~/.local/share/applications
 mv appsearch.desktop ~/.local/share/applications/
 chmod +x ~/.local/share/applications/appsearch.desktop
 mkdir /home/${user}/.config/plank/dock1/launchers/
-cp ~/.local/share/applications/appsearch.desktop /home/${user}/Desktop
+cp ~/.local/share/applications/appsearch.desktop /home/${user}/Desktop/
 touch /home/${user}/.config/plank/dock1/launchers/appsearch.dockitem
 cat > /home/${user}/.config/plank/dock1/launchers/appsearch.dockitem <<- EOF
 [PlankDockItemPreferences]
