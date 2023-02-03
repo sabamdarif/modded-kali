@@ -7,6 +7,7 @@
 - 2 Browsers (Chromium & Mozilla Firefox)
 - VLC Media Player and MPV media player (VLC Fully work)
 - Easy for Beginners
+- Add new Application Menu
 - Instal XFCE,LXDE,LXQT,KDE or GENOME Desktop 
 - More customization ( new styles added and new fonts etc... )
 
