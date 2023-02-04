@@ -66,8 +66,8 @@ macos_mode() {
         sudo bash /home/${user}/WhiteSur-gtk-theme/install.sh
 	sleep 2
 
-dbus-launch xfconf-query -c xfce4-desktop -np '/desktop-icons/style' -t 'int' -s '0'
-sleep 10
+#dbus-launch xfconf-query -c xfce4-desktop -np '/desktop-icons/style' -t 'int' -s '0'
+#sleep 10
 dbus-launch xfconf-query -c xsettings -p /Net/ThemeName -s "WhiteSur-Light"
 
 }
