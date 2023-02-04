@@ -17,6 +17,22 @@ printf "\033[32m subscribe my YouTube Channel Hello Android \033[0m\n"
 
 }
 
+check-up() {
+
+if ps -ef | grep -v grep | grep vncserver > /dev/null
+then
+    echo "${G}vncserver is running"${W}
+    sleep 2
+    clear
+    echo "${G}Starting please wait ......."${W}
+    sleep 1.5
+    clear
+else
+    echo "${R}vncserver is not running. Exiting......"${W}
+    exit 0
+fi
+
+}
 setup_plank() {
 	banner
 	gsettings set net.launchpad.plank.dock.settings:/net/launchpad/plank/docks/dock1/ theme 'Gtk+'
@@ -132,6 +148,7 @@ clean_up{
 
 }
 
+check-up
 ask_theme
 setup_plank
 zsh_setup
