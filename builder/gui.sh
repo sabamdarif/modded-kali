@@ -350,7 +350,7 @@ package() {
     sudo apt-mark hold udisks2
     sudo apt-mark unhold gvfs-daemons
     sudo dpkg --configure -a
-    packs=(sudo wget curl nano kali-menu kali-linux-core git qterminal leafpad tzdata librsvg2-common menu inetutils-tools dialog tightvncserver tigervnc-standalone-server tigervnc-tools dbus-x11 )
+    packs=(sudo wget curl nano kali-menu kali-linux-core git qterminal mousepad librsvg2-common menu inetutils-tools dialog tightvncserver tigervnc-standalone-server tigervnc-tools dbus-x11 )
     sudo dpkg --configure -a
     for hulu in "${packs[@]}"; do
         type -p "$hulu" &>/dev/null || {
