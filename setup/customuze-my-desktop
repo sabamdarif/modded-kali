@@ -141,7 +141,7 @@ setup_edex() {
 	chmod +x /home/${user}/.local/share/applications/edex-ui.desktop
 
 }
-clean_up{
+clean_up() {
      rm -rf /home/${user}/WhiteSur-icon-theme WhiteSur-gtk-theme 
       clear
     echo "${C}SUCCESFULL"${W}
