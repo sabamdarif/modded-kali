@@ -15,207 +15,45 @@ printf "\033[32m subscribe my YouTube Channel Hello Android \033[0m\n"
 
 }
 
-
-extra_things() {
-	clear
-	banner
-	echo
-	echo "-----Select Browser-----"
-	echo
-	echo "1. firefox (recommended)"
-	echo
-	echo "2. chromium."
-	echo 
-	echo "3. both firefox and chromium"
-	echo
-	echo "4. skip this part"
-	echo
-	read -p "Select option(default 1): " select_browser
-	echo
-	sleep 1.5
-	clear
-	echo "-----Select Media Player-----"
-	echo 
-	echo "1. mpv media player(recommended)"
-	echo
-	echo "2. VLC media player"
-	echo
-	echo "3. both VLC and mpv"
-	echo
-	echo "4. skip this part"
-	echo
-	read -p "Select option(default 1): " select_media
-	clear
-	if [[ $select_browser == "1" ]]; then
-		firefox_install	 
-	elif [[ $select_browser == "2" ]]; then
-		clear
-		sleep 1
-		chromium
-	elif [[ $select_browser == "3" ]]; then
-		firefox_install
-		chromium
-	elif [[ $select_browser == "4" ]]; then
-		echo
-		echo "Skiping Browser Installation"
-		echo
-		sleep 2
-		clear
-	elif [[ $select_browser == "" ]]; then
-		firefox_install
-	else 
-		firefox-esr_install
-	fi
-	if [[ $select_media == "1" ]]; then
-		mpv_installer
-	elif [[ $select_media == "2" ]]; then
-		vlc_installer
-	elif [[ $select_media == "3" ]]; then
-		mpv_installer
-		sleep 1
-		vlc_installer
-	elif [[ $select_media == "4" ]]; then
-		echo
-		echo "Skiping Media Player Installation"
-		echo
-		sleep 2
-		clear
-	else
-		mpv_installer
-	fi
-}
-
 firefox_install() {
 		clear
 		banner
 		sleep 1
-		echo "Checking if  Firefox browser installed already.."
+		echo "${Y}Checking if  Firefox browser installed already.."${W}
 		echo
 		echo
 		if [[ $(command -v firefox) ]]; then
-			echo "Firefox is already installed.."
+			echo "${C}Firefox is already installed.."${W}
 			sleep .5
 			clear
 		else
 			clear
 			sleep 1
-			echo "Firefox not found.Installing now.."
+			echo "${G}Firefox not found.Installing now.."${W}
 			echo
 			echo
 			sudo apt update;sudo apt install firefox-esr -y 
 		fi
 
 }
-video_player_installer() {
-	banner
-	echo
-	echo "Select video player from bellow"
-	echo
-	echo "1. mpv (recommended)"
-	echo
-	echo "2. vlc media player"
-	echo
-	echo "3. both vlc and mpv"
-	echo
-	echo "4. skip this part"
-	echo
-	read -p "select an option(Default 1): " select_vd
-	echo
-	if [[ ${select_vd} == "1" ]]; then
-		mpv_installer
-	elif [[ ${select_vd} == "2" ]]; then
-		vlc_installer
-	elif [[ ${select_vd} == "3" ]]; then
-		mpv_installer
-		sleep 1
-		vlc_installer
-	elif [[ ${select_vd} == "4" ]]; then
-		echo "moving to the next part"
-		sleep 1.7
-		clear
-	elif [[ ${select_vd} == "" ]]; then
-		mpv_installer
-	fi
-
-}
-
-mpv_installer() {
-
-	clear
-	banner
-	echo
-	echo "Checking if mpv is available or not"
-	if [[ $(command -v mpv) ]]; then
-		echo 
-		echo "mpv is already Installed"
-		sleep 1
-	else
-		echo "mpv is not installed. Installing mpv.."
-		echo
-		sleep 1
-		sudo apt update && sudo apt install mpv -y
-	fi
-}
-
+	
 vlc_installer() {
 
 	clear
 	banner
 	echo
-	echo "Checking if vlc is available or not"
+	echo "${Y}Checking if vlc is available or not"${W}
 	if [[ $(command -v vlc) ]]; then
 		echo 
-		echo "vlc is already Installed"
+		echo "${G}vlc is already Installed"${W}
 		sleep 1
 	else
-		echo "vlc  is not installed. Installing vlc.."
+		echo "${G}vlc  is not installed. Installing vlc.."${W}
 		echo
 		sleep 1
 		sudo apt update && sudo apt install vlc -y
 	fi
 
-}
-
-
-browser_installer() {
-	banner
-	echo 
-	echo "Select which browser do you want."
-	echo
-	echo "1. firefox"
-	echo
-	echo "2. chromium"
-	echo 
-	echo "3. firefox & chromium (both)"
-	echo
-	read -p "select an option(Default 1): " selected_b
-	echo
-	if [[ ${selected_b} == "1" ]]; then
-		clear
-		echo "installing Firefox browser.."
-		echo 
-		sudo apt install firefox-esr -y 
-	elif [[ ${selected_b} == "2" ]]; then
-		clear
-		echo "installing Chromium browser.."
-		echo
-		chromium
-	elif [[ ${selected_b} == "3" ]]; then
-		clear
-		echo "installing Firefox and Chromium browser.."
-		echo
-		sudo apt install firefox-esr -y 
-		chromium
-	elif [[ ${selected_b} == "" ]]; then
-		clear
-		echo "installing Firefox browser.."
-		echo 
-		sudo apt install firefox-esr -y
-	else 
-		echo "installing Firefox browser.."
-		echo 
-		sudo apt install firefox-esr -y
-	fi
 }
 
 select_desktop_type() {
@@ -512,7 +350,7 @@ package() {
     sudo apt-mark hold udisks2
     sudo apt-mark unhold gvfs-daemons
     sudo dpkg --configure -a
-    packs=(sudo wget curl nano kali-menu kali-linux-core git keyboard-configuration qterminal leafpad tzdata librsvg2-common menu inetutils-tools dialog tightvncserver tigervnc-standalone-server tigervnc-tools dbus-x11 )
+    packs=(sudo wget curl nano kali-menu kali-linux-core git qterminal leafpad tzdata librsvg2-common menu inetutils-tools dialog tightvncserver tigervnc-standalone-server tigervnc-tools dbus-x11 )
     sudo dpkg --configure -a
     for hulu in "${packs[@]}"; do
         type -p "$hulu" &>/dev/null || {
@@ -525,29 +363,10 @@ package() {
 
 fix_broken() {
     banner
-    echo -e "${R} [${W}-${R}]${C} Checking error and fix it..."${W}
+    echo -e "${Y}Checking error and fix it..."${W}
     sudo dpkg --configure -a
      
     sudo apt-get install --fix-broken keyboard-configuration -y
-}
-
-chromium() {
-	banner
-    echo -e "${R} [${W}-${R}]${C} Uninstalling OLD chromium..."${W}
-    chrome=(chromium* chromium-browser* snapd)
-    for hula in "${chrome[@]}"; do
-        type -p "$hula" &>/dev/null || {
-            echo -e "\n${R} [${W}-${R}]${G} Purging package : ${Y}$hula${C}"${W}
-            apt purge "$hula" -y 
-            sudo apt purge "$hula" -y 
-        }
-    done
-    sudo apt update -y
-    sudo apt install software-properties-common gnupg2 --no-install-recommends -y
-    echo -e "${R} [${W}-${R}]${C} Installing Chromium..."${W}
-    sudo apt install chromium -y
-    sudo sed -i 's/chromium %U/chromium --no-sandbox %U/g' /usr/share/applications/chromium.desktop
-    sudo apt-get upgrade -y
 }
 
 
@@ -651,10 +470,8 @@ add_user
 package
 select_desktop_type
 fix_broken
-extra_things
-#browser_installer
-#video_player_installer
-#chromium
+firefox_install
+vlc_installer
 add_sound
 customize
 clenup
