@@ -135,6 +135,7 @@ kfce_mode() {
     cd ~
     wget https://raw.githubusercontent.com/sabamdarif/modded-kali/main/setup/customuze-my-desktop
     mv customuze-my-desktop  /home/${user}/customuze-my-desktop
+    chmod +x /home/${user}/customuze-my-desktop
 }
 
 gnome_mode() {
