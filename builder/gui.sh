@@ -72,7 +72,7 @@ select_desktop_type() {
 	echo
 	echo "${C}5. GNOME (buggy)"${W}
 	echo
-	read -p "Select option(default 1): " select_method
+	read -p "${Y}Select option(default 1): "${W} select_method
 	echo
 	sleep 1.5
 
