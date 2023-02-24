@@ -26,7 +26,7 @@
   - `bash gui.sh`
   - Now select **KFCE**,**KDE**,**LXDE**,**LXQT** OR **GNOME** Desktop (any one)
 - **You have to note your VNC password !!**
-
+- **If you select xfce4 / defult desktop environment then you need to run `./customuze-my-desktop`**
 - KALI image is now successfully installed .
 
   - Type `vncstart` to run Vncserver
