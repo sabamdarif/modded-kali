@@ -126,7 +126,7 @@ kfce_mode() {
         rm -rf /usr/local/bin/fixvnc
     fi
   echo "pkill Xtigervnc" >>/usr/local/bin/fixvnc
-  echo "LD_PRELOAD=/lib/aarch64-linux-gnu/libgcc_s.so.1 vncserver :1 -localhost no" >>/usr/local/bin/fixvnc
+  echo "return \$?" >>/usr/local/bin/fixvnc
     chmod +x /usr/local/bin/fixvnc
 
     echo "export DISPLAY=":1"" >> /etc/profile
@@ -170,7 +170,7 @@ gnome_mode() {
         rm -rf /usr/local/bin/fixvnc                                         
         fi
   echo "pkill Xtigervnc" >>/usr/local/bin/fixvnc
-  echo "LD_PRELOAD=/lib/aarch64-linux-gnu/libgcc_s.so.1 vncserver :1 -localhost no" >>/usr/local/bin/fixvnc
+  echo "return \$?" >>/usr/local/bin/fixvnc
     chmod +x /usr/local/bin/fixvnc
 
     echo "export DISPLAY=":1"" >> /etc/profile
@@ -236,7 +236,7 @@ lxde_mode() {
         rm -rf /usr/local/bin/fixvnc
     fi
   echo "pkill Xtigervnc" >>/usr/local/bin/fixvnc
-  echo "LD_PRELOAD=/lib/aarch64-linux-gnu/libgcc_s.so.1 vncserver :1 -localhost no" >>/usr/local/bin/fixvnc
+  echo "return \$?" >>/usr/local/bin/fixvnc
     chmod +x /usr/local/bin/fixvnc
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
@@ -282,7 +282,7 @@ lxqt_mode(){
         rm -rf /usr/local/bin/fixvnc
     fi
   echo "pkill Xtigervnc" >>/usr/local/bin/fixvnc
-  echo "LD_PRELOAD=/lib/aarch64-linux-gnu/libgcc_s.so.1 vncserver :1 -localhost no" >>/usr/local/bin/fixvnc
+  echo "return \$?" >>/usr/local/bin/fixvnc
     chmod +x /usr/local/bin/fixvnc
 
     echo "export DISPLAY=":1"" >> /etc/profile
@@ -329,7 +329,7 @@ kde_mode() {
         rm -rf /usr/local/bin/fixvnc
     fi
   echo "pkill Xtigervnc" >>/usr/local/bin/fixvnc
-  echo "LD_PRELOAD=/lib/aarch64-linux-gnu/libgcc_s.so.1 vncserver :1 -localhost no" >>/usr/local/bin/fixvnc
+  echo "return \$?" >>/usr/local/bin/fixvnc
     chmod +x /usr/local/bin/fixvnc
 
     echo "export DISPLAY=":1"" >> /etc/profile
