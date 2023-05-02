@@ -1,6 +1,6 @@
 
 <center><img src="./image/demo-xfce.png"></center>
-<p align="center"><b>Easily Install Full Kali Linux Desktop in Termux</b></p>
+<p align="center"><b>Easily Install Full Kali Linux Verious Type Of Desktop in Termux</b></p>
 
 ### Features:
 
