@@ -33,6 +33,16 @@
    - `kali`
    - `bash gui.sh`
    - Now select **KFCE**, **KDE**, **LXDE**, **LXQT** OR **GNOME** Desktop (any one)
+
+<details>
+<summary><b><code>DEMO IMAGES: </code></b></summary>
+
+|GNOME|LXDE|LXQT|KDE|
+|--|--|--|--|
+|![img](image/demo-gnome.jpeg)|![img](image/demo-lxde.jpeg)|![img](image/demo-lxqt.jpeg)|![img](/image/demo-kde.jpeg)|
+
+</details>
+
 3. **You have to note your VNC password !!**
 4. **If you select xfce4 / default desktop environment then you need to run `./customize-my-desktop`**
 5. KALI image is now successfully installed.
