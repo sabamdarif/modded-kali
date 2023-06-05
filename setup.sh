@@ -3,7 +3,8 @@ R="$(printf '\033[1;31m')"
 G="$(printf '\033[1;32m')"
 Y="$(printf '\033[1;33m')"
 B="$(printf '\033[1;34m')"
-C="$(printf '\033[1;36m')"                                        W="$(printf '\033[1;37m')"
+C="$(printf '\033[1;36m')"                                        
+W="$(printf '\033[1;37m')"
 
 banner() {
 clear
@@ -14,31 +15,62 @@ printf "\033[32m            Code by @saba_mdarif \033[0m\n"
 
 }
 
-add_distro(){
-	banner
-	echo -e "${R} [${W}-${R}]${C} Checking required packages..."${W}
-    termux-setup-storage
-	pkg update -y
-	pkg install proot proot-distro -y
-touch $PREFIX/etc/proot-distro/kali.sh
-cat << EOF >> $PREFIX/etc/proot-distro/kali.sh
-# This is a default distribution plug-in.
-# Do not modify this file as your changes will be overwritten on next update.
-# If you want customize installation, please make a copy.
-DISTRO_NAME="Kali Linux (nethunter)"
 
-TARBALL_URL['aarch64']="https://kali.download/nethunter-images/current/rootfs/kalifs-arm64-minimal.tar.xz"
-TARBALL_SHA256['aarch64']="7e17a35e1528a5efc12bf1bbad00a764d38a5724e2b08a226849c594a3b3f029"
-TARBALL_URL['arm']="https://kali.download/nethunter-images/current/rootfs/kalifs-armhf-minimal.tar.xz"
-TARBALL_SHA256['arm']="62f07cd260cd31e9a84c25a331f3db0278d9ccdeb648522b69382946acdd8581"
-TARBALL_URL['i686']="https://kali.download/nethunter-images/current/rootfs/kalifs-i386-minimal.tar.xz"
-TARBALL_SHA256['i686']="e83cd8f57d6128efd64e88b191a1653ff315fffd78c05d536d2b6f63b2e6d49d"
-TARBALL_URL['x86_64']="https://kali.download/nethunter-images/current/rootfs/kalifs-amd64-minimal.tar.xz"
-TARBALL_SHA256['x86_64']="096290b7229ab81f1ac3b35324a7109dc19f1e2f5bf6aab1ff8254ebc95463ea"
+device_arch=$(dpkg --print-architecture)
 
-EOF
+install_rootfs(){
+    case "$device_arch" in
+        aarch64)
+            archtype="arm64"
+            ;;
+        arm)
+            archtype="armhf"
+            ;;
+        amd64|x86_64)
+            archtype="amd64"
+            ;;
+        i*86|x86)
+            archtype="i386"
+            ;;
+        *)
+            echo "unknown architecture"; exit 1 ;;
+    esac
 
+    base_url="https://kali.download/nethunter-images/current/rootfs/kalifs-${archtype}-minimal.tar.xz"
+
+    wget "$base_url"
+
+    rootfs_file="rootfs/kalifs-${archtype}-minimal.tar.xz"
+
+    get_sha=$(sha256sum "$rootfs_file")
 }
+
+add_distro(){
+    banner
+    echo -e "${R} [${W}-${R}]${C} Checking required packages...${W}"
+    termux-setup-storage
+    pkg update -y
+    pkg install proot proot-distro -y
+    folder_path="/data/data/com.termux/files/usr/var/lib/proot-distro"
+
+    if [ -d "$folder_path" ]; then
+        mkdir -p "${folder_path}/dlcache"
+        mv "$rootfs_file" "${folder_path}/dlcache"
+    else
+        mkdir -p "$folder_path"
+        mv "$rootfs_file" "${folder_path}/dlcache"
+    fi
+
+    touch "$PREFIX/etc/proot-distro/kali.sh"
+    cat <<EOF > "$PREFIX/etc/proot-distro/kali.sh"
+# If you want to customize installation, please make a copy.
+DISTRO_NAME="Kali Linux (nethunter)"
+TARBALL_URL['$device_arch']="$base_url"
+TARBALL_SHA256['$device_arch']="$get_sha"
+EOF
+}
+
+
 
 check_pack() {
 	banner
@@ -86,7 +118,7 @@ add_sound() {
         touch $HOME/.sound
     fi
 
-    echo "pulseaudio --start --exit-idle-time=-1" >> $HOME/.sound
+    echo "pulseaudio --start --exit-idle-time=-1" > $HOME/.sound
     echo "pacmd load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" >> $HOME/.sound
     if [[ -e "$PREFIX/var/lib/proot-distro/installed-rootfs/kali /root/gui.sh" ]]; then
         chmod +x $PREFIX/var/lib/proot-distro/installed-rootfs/kali/root/gui.sh
@@ -115,7 +147,8 @@ notes() {
 }
 
 
-
+install_rootfs
+add_distro
 add_distro
 check_pack
 install_rootfs
