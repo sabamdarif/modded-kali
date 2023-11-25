@@ -139,63 +139,69 @@ kfce_mode() {
 }
 
 gnome_mode() {
+add_user
 	banner
 	echo -e "${R} [${W}-${R}]${C} Installing GNOME DESKTOP"${W}
 	apt update
-	sudo apt install kali-desktop-gnome -y
-	sudo apt-get install gnome-panel gnome-settings-daemon metacity nautilus gnome-tweaks gnome-session-flashback -y
-	banner
-   echo -e "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
-   sudo apt autoremove tigervnc-standalone-server tigervnc-common tigervnc-tools -y
-  if [[ ! -d "$HOME/.vnc" ]]; then
-        mkdir -p "$HOME/.vnc"
-    fi
-   if [[ -e "/usr/local/bin/vncstart" ]]; then
-        rm -rf /usr/local/bin/vncstart
-    fi                                                                      
-    echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstart
-  echo "sudo service dbus start" >>/usr/local/bin/vncstart
-  echo "vncserver -geometry 1500x720" >>/usr/local/bin/vncstart
-    chmod +x /usr/local/bin/vncstart
-  if [[ -e "/usr/local/bin/vncstop" ]]; then
-        rm -rf /usr/local/bin/vncstop                                        
-        fi
-  echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstop
-  echo "vncserver -kill :1" >>/usr/local/bin/vncstop
-  echo "rm -rf /username/.vnc/localhost:*.pid" >>/usr/local/bin/vncstop
-  echo "rm -rf /tmp/.X1-lock" >>/usr/local/bin/vncstop
-  echo "rm -rf /tmp/.X11-unix/X1" >>/usr/local/bin/vncstop
-    chmod +x /usr/local/bin/vncstop
-  if [[ -e "/usr/local/bin/fixvnc" ]]; then
-        rm -rf /usr/local/bin/fixvnc                                         
-        fi
-  echo "pkill Xtigervnc" >>/usr/local/bin/fixvnc
-  echo "return \$?" >>/usr/local/bin/fixvnc
-    chmod +x /usr/local/bin/fixvnc
+         apt install install gnome-shell gnome-terminal gnome-tweaks -y
+	sudo dpkg --configure -a
+    sudo apt --fix-broken install -y
+    packs=(wget curl nautilus nano gedit tigervnc-standalone-server tigervnc-tools dbus-x11 )
+    sudo dpkg --configure -a
+    for hulu in "${packs[@]}"; do
+        type -p "$hulu" &>/dev/null || {
+            echo -e "\n${R} [${W}-${R}]${G} Installing package : ${Y}$hulu${C}"${W}
+            sudo apt-get install "$hulu" -y --no-install-recommends
+	       echo -e "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
+ if [[ ! -d "$HOME/.vnc" ]]; then
+    mkdir -p "$HOME/.vnc"
+fi
 
-    echo "export DISPLAY=":1"" >> /etc/profile
-    echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
-    source /etc/profile
-    cat << EOF >> ~/.vnc/xstartup
-# Uncomment the following two lines for normal desktop:
-# unset SESSION_MANAGER
-# exec /etc/X11/xinit/xinitrc
-[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
-[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
-xsetroot -solid grey
-vncconfig -iconic &
-x-terminal-emulator -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" &
-x-window-manager &
-export XKL_XMODMAP_DISABLE=1
-export XDG_CURRENT_DESKTOP="GNOME-Flashback:GNOME"
-export XDG_MENU_PREFIX="gnome-flashback-"
-gnome-session --session=gnome-flashback-metacity --disable-acceleration-check --debug &
-gnome-panel &
-gnome-settings-daemon &
-metacity &
-nautilus &
+if [[ -e "$HOME/.vnc/xstartup" ]]; then
+    rm "$HOME/.vnc/xstartup"
+fi
 
+touch "$HOME/.vnc/xstartup"
+cat << EOF >> "$HOME/.vnc/xstartup"
+export XDG_CURRENT_DESKTOP="GNOME"
+service dbus start
+gnome-shell --x11
 EOF
+
+chmod +x "$HOME/.vnc/xstartup"
+
+mkdir -p "/home/$user/.vnc"
+cp -r "$HOME/.vnc/xstartup" "/home/$user/.vnc/xstartup"
+chmod +x "/home/$user/.vnc/xstartup"
+   if [[ -e "/usr/local/bin/vncstart" ]]; then
+        rm -rf /usr/local/bin/vncstart 
+    fi
+  echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstart
+  echo "dbus-launch" >>/usr/local/bin/vncstart
+  echo "vncserver -geometry 2580x1080 " >>/bin/vncstart
+    chmod +x /bin/vncstart
+  if [[ -e "/bin/vncstop" ]]; then
+        rm -rf /bin/vncstop
+    fi
+  echo "#!/usr/bin/env bash" >>/bin/vncstop
+  echo "vncserver -kill :*" >>/usr/local/bin/vncstop
+  echo "rm -rf $HOME/.vnc/localhost:*.pid" >>/bin/vncstop
+  echo "rm -rf /tmp/.X1-lock" >>/bin/vncstop
+  echo "rm -rf /tmp/.X11-unix/X1" >>/bin/vncstop
+    chmod +x /bin/vncstop
+  if [[ -e "/usr/local/bin/fixvnc" ]]; then
+        rm -rf /bin/fixvnc
+    fi
+  echo "pkill Xtigervnc" >>/bin/fixvnc
+  echo "rm -rf $HOME/.vnc/localhost:*.pid" >>/bin/fixvnc
+  echo "rm -rf /tmp/.X1-lock" >>/bin/fixvnc
+  echo "rm -rf /tmp/.X11-unix/X1" >>/bin/fixvnc
+    chmod +x /bin/fixvnc
+ echo -e "${R} [${W}-${R}]${C} Fix Vnc Login Issue.."${W}
+   for file in $(find /usr -type f -iname "*login1*"); do rm -rf $file
+   done
+ 
+
 }
 
 lxde_mode() {
