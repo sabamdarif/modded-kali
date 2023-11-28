@@ -82,7 +82,7 @@ fi
 add_distro(){
     banner
     echo -e "${R} [${W}-${R}]${C} Checking required packages...${W}"
-    sed -i 's/kali/ /g' /data/data/com.termux/files/usr/proot-distro
+    sed -i 's/kali/ /g' /data/data/com.termux/files/usr/bin/proot-distro
     folder_path="/data/data/com.termux/files/usr/var/lib/proot-distro"
 
     if [ -d "$folder_path" ]; then
