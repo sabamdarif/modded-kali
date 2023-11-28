@@ -82,6 +82,7 @@ fi
 add_distro(){
     banner
     echo -e "${R} [${W}-${R}]${C} Checking required packages...${W}"
+    sed -i 's/kali/ /g' /data/data/com.termux/files/usr/proot-distro
     folder_path="/data/data/com.termux/files/usr/var/lib/proot-distro"
 
     if [ -d "$folder_path" ]; then
@@ -94,12 +95,12 @@ add_distro(){
     fi
 
     touch "$PREFIX/etc/proot-distro/kali.sh"
-    cat <<EOF > "$PREFIX/etc/proot-distro/kali.sh"
+    cat << EOF > "$PREFIX/etc/proot-distro/kali.sh"
 # If you want to customize installation, please make a copy.
 DISTRO_NAME="Kali Linux (nethunter)"
 TARBALL_URL['$device_arch']="$base_url"
 TARBALL_SHA256['$device_arch']="$get_sha"
-EOF
+   EOF
 }
 
 
