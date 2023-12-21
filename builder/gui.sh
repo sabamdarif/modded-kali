@@ -162,12 +162,9 @@ if [[ -e "$HOME/.vnc/xstartup" ]]; then
 fi
 
 touch "$HOME/.vnc/xstartup"
-cat << EOF >> "$HOME/.vnc/xstartup"
-export XDG_CURRENT_DESKTOP="GNOME"
-service dbus start
-gnome-shell --x11
-EOF
-
+echo "export XDG_CURRENT_DESKTOP="GNOME"" >>$HOME/.vnc/xstartup
+echo "service dbus start" >>$HOME/.vnc/xstartup
+echo "gnome-shell --x11" >>$HOME/.vnc/xstartup
 chmod +x "$HOME/.vnc/xstartup"
 
 mkdir -p "/home/$user/.vnc"
