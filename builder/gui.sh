@@ -143,16 +143,17 @@ add_user
 	banner
 	echo -e "${R} [${W}-${R}]${C} Installing GNOME DESKTOP"${W}
 	apt update
-         apt install install gnome-shell gnome-terminal gnome-tweaks -y
-	sudo dpkg --configure -a
-    sudo apt --fix-broken install -y
-    packs=(wget curl nautilus nano gedit tigervnc-standalone-server tigervnc-tools dbus-x11 )
-    sudo dpkg --configure -a
-    for hulu in "${packs[@]}"; do
+	apt install install gnome-shell gnome-terminal gnome-tweaks -y
+	dpkg --configure -a
+	apt --fix-broken install -y
+	packs=(wget curl nautilus nano gedit tigervnc-standalone-server tigervnc-tools dbus-x11 )
+	for hulu in "${packs[@]}"; do
         type -p "$hulu" &>/dev/null || {
             echo -e "\n${R} [${W}-${R}]${G} Installing package : ${Y}$hulu${C}"${W}
             sudo apt-get install "$hulu" -y --no-install-recommends
-	       echo -e "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
+        }
+    done
+    echo -e "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
  if [[ ! -d "$HOME/.vnc" ]]; then
     mkdir -p "$HOME/.vnc"
 fi
@@ -171,7 +172,7 @@ mkdir -p "/home/$user/.vnc"
 cp -r "$HOME/.vnc/xstartup" "/home/$user/.vnc/xstartup"
 chmod +x "/home/$user/.vnc/xstartup"
    if [[ -e "/usr/local/bin/vncstart" ]]; then
-        rm -rf /usr/local/bin/vncstart 
+        rm -rf /usr/local/bin/vncstart
     fi
   echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstart
   echo "dbus-launch" >>/usr/local/bin/vncstart
@@ -197,8 +198,6 @@ chmod +x "/home/$user/.vnc/xstartup"
  echo -e "${R} [${W}-${R}]${C} Fix Vnc Login Issue.."${W}
    for file in $(find /usr -type f -iname "*login1*"); do rm -rf $file
    done
- 
-
 }
 
 lxde_mode() {
