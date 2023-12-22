@@ -100,7 +100,7 @@ banner
 DISTRO_NAME="Kali Linux (nethunter)"
 TARBALL_URL['$device_arch']="$base_url"
 TARBALL_SHA256['$device_arch']="$get_sha"
-EOF
+   EOF
 }
 
 
