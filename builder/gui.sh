@@ -70,14 +70,14 @@ select_desktop_type() {
 	echo
 	echo "${C}4. KDE"${W}
 	echo
-	echo "${C}5. GNOME (buggy)"${W}
+	echo "${C}5. GNOME"${W}
 	echo
 	read -p "${Y}Select option(default 1): "${W} select_method
 	echo
 	sleep 1.5
 
 	if [[ $select_method == "1" ]]; then
-		kfce_mode
+		xfce_mode
 	fi
 	if [[ $select_method == "2" ]]; then
 		lxde_mode
@@ -96,7 +96,7 @@ select_desktop_type() {
 	fi
 }
 
-kfce_mode() {
+xfce_mode() {
 	banner
 	echo -e "${R} [${W}-${R}]${C} Installing XFCE DESKTOP"${W}
 	apt update
@@ -136,10 +136,10 @@ kfce_mode() {
     wget https://raw.githubusercontent.com/sabamdarif/modded-kali/main/setup/customuze-my-desktop
     mv customuze-my-desktop  /home/${user}/customuze-my-desktop
     chmod +x /home/${user}/customuze-my-desktop
+    customize
 }
 
 gnome_mode() {
-add_user
 	banner
 	echo -e "${R} [${W}-${R}]${C} Installing GNOME DESKTOP"${W}
 	apt update
@@ -449,24 +449,6 @@ mkdir /home/${user}/.config/autostart/
     cp /etc/skel/.zshrc ~/
     sudo chsh -s $(which zsh) $(whoami)
 }
-clenup() {
-	clear
-    banner
-	echo
-	echo "Cleaning up system.."
-	echo
-    sleep 2
-    cd ~
-	sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
-	sleep 2
-	sudo dpkg --configure -a
-	apt autoremove -y
-	sudo apt autoremove xfce4-terminal -y
-        sleep 2
-    sudo apt clean && sudo apt autoclean
-    rm /root/gui.sh
-	
-}
 
 #full_update
 add_user
@@ -476,7 +458,4 @@ fix_broken
 firefox_install
 vlc_installer
 add_sound
-customize
-clenup
-clean_up
 note
