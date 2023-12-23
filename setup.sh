@@ -143,6 +143,12 @@ install_rootfs() {
         echo -e "\n${R} [${W}-${R}]${G} Error Installing Distro !\n"${W}
         exit 0
     fi
+    if [[ -e "$PREFIX/var/lib/proot-distro/installed-rootfs/kali /root/gui.sh" ]]; then
+        chmod +x $PREFIX/var/lib/proot-distro/installed-rootfs/kali/root/gui.sh
+    else
+        cp -f /data/data/com.termux/files/home/modded-kali/builder/gui.sh $PREFIX/var/lib/proot-distro/installed-rootfs/kali/root/gui.sh
+        chmod +x $PREFIX/var/lib/proot-distro/installed-rootfs/kali/root/gui.sh
+    fi
 }
 
 add_sound() {
@@ -154,13 +160,6 @@ add_sound() {
 
     echo "pulseaudio --start --exit-idle-time=-1" > $HOME/.sound
     echo "pacmd load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" >> $HOME/.sound
-    if [[ -e "$PREFIX/var/lib/proot-distro/installed-rootfs/kali /root/gui.sh" ]]; then
-        chmod +x $PREFIX/var/lib/proot-distro/installed-rootfs/kali/root/gui.sh
-    else
-        mv -f /data/data/com.termux/files/home/modded-kali/builder/gui.sh $PREFIX/var/lib/proot-distro/installed-rootfs/kali/root/gui.sh
-        chmod +x $PREFIX/var/lib/proot-distro/installed-rootfs/kali/root/gui.sh
-    fi
-
 }
 
 notes() {

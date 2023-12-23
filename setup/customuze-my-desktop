@@ -8,7 +8,7 @@ C="$(printf '\033[1;36m')"
 
 user=$(whoami)
 
-banner() {
+function banner() {
 clear
 printf "\033[33m       █▄▀ ▄▀█ █░░ █   █▀▄▀█ █▀█ █▀▄\033[0m\n"
 printf "\033[36m       █░█ █▀█ █▄▄ █   █░▀░█ █▄█ █▄▀ \033[0m\n"
@@ -17,37 +17,35 @@ printf "\033[32m subscribe my YouTube Channel Hello Android \033[0m\n"
 
 }
 
-check-up() {
-
+function check-up() {
 if ps -ef | grep -v grep | grep vncserver > /dev/null
 then
     echo "${G}vncserver is running"${W}
-    sleep 2
+    sleep 1.2
     clear
     echo "${G}Starting please wait ......."${W}
-    sleep 1.5
+    sleep 1.2
     clear
 else
     echo "${R}vncserver is not running. Exiting......"${W}
+	sleep 1
     exit 0
 fi
-
 }
-setup_plank() {
+
+function setup_plank() {
 	banner
 	gsettings set net.launchpad.plank.dock.settings:/net/launchpad/plank/docks/dock1/ theme 'Gtk+'
 	gsettings set net.launchpad.plank.dock.settings:/net/launchpad/plank/docks/dock1/ zoom-enabled true
-
 }
 
-zsh_setup() {
+function zsh_setup() {
 	sudo apt install zsh zsh-autosuggestions zsh-syntax-highlighting -y
     cp /etc/skel/.zshrc ~/
     sudo chsh -s $(which zsh) $(whoami)
-
 }
 
-ask_theme() {
+function ask_theme() {
 read -p "${G}Do you want to setup MacOS themes? (y/n) "${w} answer
 
 if [ "$answer" == "y" ]; then
@@ -56,23 +54,19 @@ else
     echo "${C}Canceling...."${W}
     sleep 1.5
 fi
-
 }
 
-macos_mode() {
+function macos_mode() {
 	banner
 	git clone --depth=1 https://github.com/vinceliuice/WhiteSur-gtk-theme /home/${user}/WhiteSur-gtk-theme
 	sudo chmod +x /home/${user}/WhiteSur-gtk-theme/install.sh
         sudo bash /home/${user}/WhiteSur-gtk-theme/install.sh
-	sleep 2
-
 #dbus-launch xfconf-query -c xfce4-desktop -np '/desktop-icons/style' -t 'int' -s '0'
-#sleep 10
+#sleep 1
 dbus-launch xfconf-query -c xsettings -p /Net/ThemeName -s "WhiteSur-Light"
-
 }
 
-app_menu() {
+function app_menu() {
 	banner
 	sudo apt install rofi -y
 	sudo apt install wget -y
@@ -82,36 +76,40 @@ app_menu() {
 	wget https://raw.githubusercontent.com/sabamdarif/modded-kali/main/image/application-menu.png
 	wget https://raw.githubusercontent.com/sabamdarif/modded-kali/main/setup/style.rasi
 	mv style.rasi application-menu.png ~/.config/rofi
-	echo "#!/usr/bin/env bash
+cat <<EOF > "/home/${user}/.config/rofi/launcher.sh"
+#!/usr/bin/env bash
 
 	## Run
 	rofi \
     -show drun \
-    -theme /home/${user}/.config/rofi/style.rasi" >> /home/${user}/.config/rofi/launcher.sh
-	touch appsearch.desktop
-echo "[Desktop Entry]
+    -theme /home/${user}/.config/rofi/style.rasi
+EOF
+cat <<EOF > "appsearch.desktop"
+[Desktop Entry]
 Name=Application Search
 Exec=bash /home/${user}/.config/rofi/launcher.sh
 Icon=/home/${user}/.config/rofi/application-menu.png
 Type=Application
 Terminal=false
-StartupNotify=false" >> appsearch.desktop
+StartupNotify=false
+EOF
 mkdir ~/.local/share/applications
 mv appsearch.desktop ~/.local/share/applications/
 chmod +x ~/.local/share/applications/appsearch.desktop
-mkdir /home/${user}/.config/plank/dock1/launchers/
+if [[ ! -d "/home/${user}/.config/plank/dock1/launchers/" ]]; then
+    mkdir /home/${user}/.config/plank/dock1/launchers/
+fi
 cp ~/.local/share/applications/appsearch.desktop /home/${user}/Desktop/
-touch /home/${user}/.config/plank/dock1/launchers/appsearch.dockitem
-cat > /home/${user}/.config/plank/dock1/launchers/appsearch.dockitem <<- EOF
+cat <<EOF > "/home/${user}/.config/plank/dock1/launchers/appsearch.dockitem"
 [PlankDockItemPreferences]
 Launcher=file:///home/${user}/.local/share/applications/appsearch.desktop
 EOF
-clear 
+clear
+killall plank
 echo "${G} setup successfull.."${W}
-
 }
 
-ask_edex() {
+function ask_edex() {
 read -p "${G}Do you to install EdexUi(Hollywood Style Terminal)? (y/n) "${w} answer
 
 if [ "$answer" == "y" ]; then
@@ -120,32 +118,30 @@ else
     echo "${C}Canceling...."${W}
     sleep 1.5
 fi
-
 }
 
-setup_edex() {
+function setup_edex() {
 	banner
 	cd ~
         wget https://github.com/GitSquared/edex-ui/releases/download/v2.2.8/eDEX-UI-Linux-arm64.AppImage
 	wget https://raw.githubusercontent.com/sabamdarif/modded-kali/main/image/edex_ui.png
 	mv eDEX-UI-Linux-arm64.AppImage /home/${user}/.local/share/applications/
 	mv edex_ui.png /home/${user}/.local/share/applications/
-	touch ~/.local/share/applications/edex-ui.desktop
-	echo " [Desktop Entry]
-	Name=Edex Ui
-	Exec="/home/${user}/.local/share/applications/eDEX-UI-Linux-arm64.AppImage"
-	Icon=/home/${user}/.local/share/applications/edex_ui.png
-	Type=Application
-	Terminal=true
-	StartupNotify=false " >> /home/${user}/.local/share/applications/edex-ui.desktop
+	    cat <<EOF > "/home/${user}/.local/share/applications/edex-ui.desktop"
+[Desktop Entry]
+Name=Edex Ui
+Exec="/home/${user}/.local/share/applications/eDEX-UI-Linux-arm64.AppImage"
+Icon=/home/${user}/.local/share/applications/edex_ui.png
+Type=Application
+Terminal=true
+StartupNotify=false 
+EOF
 	chmod +x /home/${user}/.local/share/applications/edex-ui.desktop
-
 }
-clean_up() {
+function clean_up() {
      rm -rf /home/${user}/WhiteSur-icon-theme WhiteSur-gtk-theme 
       clear
     echo "${C}SUCCESFULL"${W}
-
 }
 
 check-up

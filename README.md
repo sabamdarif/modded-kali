@@ -39,7 +39,7 @@
 
 |GNOME|LXDE|LXQT|KDE|
 |--|--|--|--|
-|![img](image/demo-gnome.jpeg)|![img](image/demo-lxde.jpeg)|![img](image/demo-lxqt.jpeg)|![img](/image/demo-kde.jpeg)|
+|![img](image/demo-gnome.png)|![img](image/demo-lxde.jpeg)|![img](image/demo-lxqt.png)|![img](/image/demo-kde.png)|
 
 </details>
 
@@ -60,7 +60,8 @@
 
 ### NOTE:
 
-- **Type `kali` to run KALI CLI.**
+- **Type `kali` to run KALI CLI as noraml user**
+- **Type `kali -r` to run KALI CLI as root user**
 - **Type `vncstart` to run Vncserver**
 - **Type `vncstop` to stop Vncserver**
 - **Type `fixvnc` if the vnc server not started (for Android 12 users)**
@@ -70,6 +71,8 @@
 - **Issue:-** Android 12 users have a problem of vncserver automatically stop and and show " [Process completed (signal 9) - press Enter] " &  the next time vncserver not starting
 
 - **Solution:-** *use command `fixvnc` and the server started again*
+- **Issue:-** If vnc server related issue like *vnc autostop* , *Apps not showing* 
+- **Solution:-** Login into root user using `kali -r` then launch vncserver
 
 ### If you like our work then dont forget to give a Star :)
 

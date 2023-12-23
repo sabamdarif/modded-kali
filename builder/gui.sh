@@ -15,6 +15,63 @@ printf "\033[32m subscribe my YouTube Channel Hello Android \033[0m\n"
 
 }
 
+add_user() {
+	  apt autoremove sudo -y
+    banner
+    read -p $' \e[1;31m[\e[0m\e[1;77m~\e[0m\e[1;31m]\e[0m\e[1;92m Input Username [Lowercase] : \e[0m\e[1;96m\en' user
+    echo -e "${W}"
+    read -p $' \e[1;31m[\e[0m\e[1;77m~\e[0m\e[1;31m]\e[0m\e[1;92m Input Password : \e[0m\e[1;96m\en' pass
+    echo -e "${W}"
+    deluser kali
+    useradd -m -s $(which bash) ${user}
+    echo "${user}:${pass}" | chpasswd
+    apt update -y
+    apt install sudo -y
+    echo "$user ALL=(ALL:ALL) ALL" >> /etc/sudoers
+    #echo "proot-distro login --user $user kali" > /data/data/com.termux/files/usr/bin/kali
+    cat <<EOF > "/data/data/com.termux/files/usr/bin/kali"
+if [ "\$1" == "-r" ]; then
+    proot-distro login kali
+else
+    proot-distro login --user "$user" kali
+fi 
+EOF
+    #chmod +x /data/data/com.termux/files/usr/bin/kali
+    clear
+
+}
+
+fix_broken() {
+    banner
+    echo -e "${Y}Checking error and fix it..."${W}
+    sudo dpkg --configure -a
+     
+    sudo apt-get install --fix-broken keyboard-configuration -y
+}
+
+package() {
+  banner
+    echo -e "${R} [${W}-${R}]${C} Checking required packages..."${W}
+    apt update -y
+    apt install sudo -y
+    apt --fix-broken install udisks2 -y
+    rm /var/lib/dpkg/info/udisks2.postinst
+    echo "" > /var/lib/dpkg/info/udisks2.postinst
+    sudo dpkg --configure -a
+    sudo apt-mark hold udisks2
+    sudo apt-mark unhold gvfs-daemons
+    sudo dpkg --configure -a
+    packs=(sudo wget curl nano kali-menu kali-linux-core git qterminal mousepad librsvg2-common menu inetutils-tools dialog tightvncserver tigervnc-standalone-server tigervnc-tools dbus-x11 )
+    sudo dpkg --configure -a
+    for hulu in "${packs[@]}"; do
+        type -p "$hulu" &>/dev/null || {
+            echo -e "\n${R} [${W}-${R}]${G} Installing package : ${Y}$hulu${C}"${W}
+            sudo apt-get install "$hulu" -y --no-install-recommends
+        }
+    done
+    fix_broken
+}
+
 firefox_install() {
 		clear
 		banner
@@ -34,17 +91,16 @@ firefox_install() {
 			echo
 			sudo apt update;sudo apt install firefox-esr -y 
 		fi
-
 }
 	
 vlc_installer() {
-
 	clear
 	banner
-	echo
+  read -p "${G}Do you to install VLC (y/n) "${w} answer
+if [ "$answer" == "y" ]; then
 	echo "${Y}Checking if vlc is available or not"${W}
 	if [[ $(command -v vlc) ]]; then
-		echo 
+		echo
 		echo "${G}vlc is already Installed"${W}
 		sleep 1
 	else
@@ -53,7 +109,10 @@ vlc_installer() {
 		sleep 1
 		sudo apt update && sudo apt install vlc -y
 	fi
-
+else
+    echo "${C}Canceling...."${W}
+    sleep 1.2
+fi
 }
 
 select_desktop_type() {
@@ -75,7 +134,6 @@ select_desktop_type() {
 	read -p "${Y}Select option(default 1): "${W} select_method
 	echo
 	sleep 1.5
-
 	if [[ $select_method == "1" ]]; then
 		xfce_mode
 	fi
@@ -96,8 +154,37 @@ select_desktop_type() {
 	fi
 }
 
+vncstop() {
+  if [[ -e "/bin/vncstop" ]]; then
+        rm -rf /bin/vncstop
+    fi
+      cat <<EOF > "/bin/vncstop"
+      #!/usr/bin/env bash
+      rm -rf /username/.vnc/localhost:*.pid
+      rm -rf /tmp/.X1-lock
+      rm -rf /tmp/.X11-unix/X1
+EOF
+chmod +x /bin/vncstop
+}
+
+fixvnc() {
+  if [[ -e "/bin/fixvnc" ]]; then
+        rm -rf /bin/fixvnc
+    fi
+  cat <<EOF > "/bin/vncstop"
+      #!/usr/bin/env bash
+      pkill Xtigervnc
+      rm -rf /username/.vnc/localhost:*.pid
+      rm -rf /tmp/.X1-lock
+      rm -rf /tmp/.X11-unix/X1
+EOF
+chmod +x /bin/vncstop
+}
+
 xfce_mode() {
-	banner
+  add_user
+  package
+  banner
 	echo -e "${R} [${W}-${R}]${C} Installing XFCE DESKTOP"${W}
 	apt update
        sudo apt install xfce4* kali-themes -y
@@ -113,22 +200,8 @@ xfce_mode() {
   echo "dbus-launch" >>/usr/local/bin/vncstart
   echo "vncserver -geometry 1500x720  -xstartup /usr/bin/startxfce4" >>/usr/local/bin/vncstart
   chmod +x /usr/local/bin/vncstart
-  if [[ -e "/usr/local/bin/vncstop" ]]; then
-        rm -rf /usr/local/bin/vncstop
-    fi
-  echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstop
-  echo "vncserver -kill :*" >>/usr/local/bin/vncstop
-  echo "rm -rf /username/.vnc/localhost:*.pid" >>/usr/local/bin/vncstop
-  echo "rm -rf /tmp/.X1-lock" >>/usr/local/bin/vncstop
-  echo "rm -rf /tmp/.X11-unix/X1" >>/usr/local/bin/vncstop
-    chmod +x /usr/local/bin/vncstop
-  if [[ -e "/usr/local/bin/fixvnc" ]]; then
-        rm -rf /usr/local/bin/fixvnc
-    fi
-  echo "pkill Xtigervnc" >>/usr/local/bin/fixvnc
-  echo "return \$?" >>/usr/local/bin/fixvnc
-    chmod +x /usr/local/bin/fixvnc
-
+  vncstop
+  fixvnc
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
@@ -143,7 +216,7 @@ gnome_mode() {
 	banner
 	echo -e "${R} [${W}-${R}]${C} Installing GNOME DESKTOP"${W}
 	apt update
-	apt install install gnome-shell gnome-terminal gnome-tweaks -y
+	apt install gnome-shell gnome-terminal gnome-tweaks -y
 	dpkg --configure -a
 	apt --fix-broken install -y
 	packs=(wget curl nautilus nano gedit tigervnc-standalone-server tigervnc-tools dbus-x11 )
@@ -157,15 +230,14 @@ gnome_mode() {
  if [[ ! -d "$HOME/.vnc" ]]; then
     mkdir -p "$HOME/.vnc"
 fi
-
 if [[ -e "$HOME/.vnc/xstartup" ]]; then
     rm "$HOME/.vnc/xstartup"
 fi
-
-touch "$HOME/.vnc/xstartup"
-echo "export XDG_CURRENT_DESKTOP="GNOME"" >>$HOME/.vnc/xstartup
-echo "service dbus start" >>$HOME/.vnc/xstartup
-echo "gnome-shell --x11" >>$HOME/.vnc/xstartup
+cat <<EOF > "$HOME/.vnc/xstartup"
+export XDG_CURRENT_DESKTOP="GNOME"
+service dbus start
+echo "gnome-shell --x11    
+EOF
 chmod +x "$HOME/.vnc/xstartup"
 
 mkdir -p "/home/$user/.vnc"
@@ -175,33 +247,23 @@ chmod +x "/home/$user/.vnc/xstartup"
         rm -rf /usr/local/bin/vncstart
     fi
   echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstart
-  echo "dbus-launch" >>/usr/local/bin/vncstart
   echo "vncserver -geometry 2580x1080 " >>/bin/vncstart
     chmod +x /bin/vncstart
-  if [[ -e "/bin/vncstop" ]]; then
-        rm -rf /bin/vncstop
-    fi
-  echo "#!/usr/bin/env bash" >>/bin/vncstop
-  echo "vncserver -kill :*" >>/usr/local/bin/vncstop
-  echo "rm -rf $HOME/.vnc/localhost:*.pid" >>/bin/vncstop
-  echo "rm -rf /tmp/.X1-lock" >>/bin/vncstop
-  echo "rm -rf /tmp/.X11-unix/X1" >>/bin/vncstop
-    chmod +x /bin/vncstop
-  if [[ -e "/usr/local/bin/fixvnc" ]]; then
-        rm -rf /bin/fixvnc
-    fi
-  echo "pkill Xtigervnc" >>/bin/fixvnc
-  echo "rm -rf $HOME/.vnc/localhost:*.pid" >>/bin/fixvnc
-  echo "rm -rf /tmp/.X1-lock" >>/bin/fixvnc
-  echo "rm -rf /tmp/.X11-unix/X1" >>/bin/fixvnc
-    chmod +x /bin/fixvnc
+  vncstop
+  fixvnc
+  echo "export DISPLAY=":1"" >> /etc/profile
+    echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
+    source /etc/profile
  echo -e "${R} [${W}-${R}]${C} Fix Vnc Login Issue.."${W}
    for file in $(find /usr -type f -iname "*login1*"); do rm -rf $file
    done
+   echo "proot-distro login kali" > /data/data/com.termux/files/usr/bin/kali
 }
 
 lxde_mode() {
-	banner
+  add_user
+  package
+  banner
 	echo -e "${R} [${W}-${R}]${C} Installing LXDE DESKTOP"${W}
 	apt update
 	sudo apt install lxde lxterminal kali-themes -y
@@ -218,37 +280,24 @@ lxde_mode() {
   if [[ ! -d "$HOME/.vnc" ]]; then
         mkdir -p "$HOME/.vnc"
     fi
-   if [[ -e "/usr/local/bin/vncstart" ]]; then
+ if [[ -e "/usr/local/bin/vncstart" ]]; then
         rm -rf /usr/local/bin/vncstart
     fi
-    echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstart
+  echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstart
   echo "dbus-launch" >>/usr/local/bin/vncstart
-  echo "vncserver -geometry 1600x900 -name remote-desktop :1" >>/usr/local/bin/vncstart
-  chmod +x /usr/local/bin/vncstart
-  if [[ -e "/usr/local/bin/vncstop" ]]; then
-        rm -rf /usr/local/bin/vncstop
-    fi
-  echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstop
-  echo "vncserver -kill :*" >>/usr/local/bin/vncstop
-  echo "rm -rf /username/.vnc/localhost:*.pid" >>/usr/local/bin/vncstop
-  echo "rm -rf /tmp/.X1-lock" >>/usr/local/bin/vncstop
-  echo "rm -rf /tmp/.X11-unix/X1" >>/usr/local/bin/vncstop
-    chmod +x /usr/local/bin/vncstop
-  if [[ -e "/usr/local/bin/fixvnc" ]]; then
-        rm -rf /usr/local/bin/fixvnc
-    fi
-  echo "pkill Xtigervnc" >>/usr/local/bin/fixvnc
-  echo "return \$?" >>/usr/local/bin/fixvnc
-    chmod +x /usr/local/bin/fixvnc
+  echo "vncserver -geometry 1600x900 -name remote-desktop :1" >>/bin/vncstart
+    chmod +x /bin/vncstart
+  vncstop
+  fixvnc
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
-
-
 }
 
 lxqt_mode(){
-	banner
+  add_user
+  package
+  banner
 	echo -e "${R} [${W}-${R}]${C} Installing LXQT DESKTOP"${W}
 	apt-get update
 	apt-get install udisks2 -y
@@ -264,38 +313,24 @@ lxqt_mode(){
   if [[ ! -d "$HOME/.vnc" ]]; then
         mkdir -p "$HOME/.vnc"
     fi
-   if [[ -e "/usr/local/bin/vncstart" ]]; then
+if [[ -e "/usr/local/bin/vncstart" ]]; then
         rm -rf /usr/local/bin/vncstart
     fi
-    echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstart
+  echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstart
   echo "dbus-launch" >>/usr/local/bin/vncstart
-  echo "vncserver -geometry 1600x900 -xstartup /bin/startlxqt" >>/usr/local/bin/vncstart
-  chmod +x /usr/local/bin/vncstart
-  if [[ -e "/usr/local/bin/vncstop" ]]; then
-        rm -rf /usr/local/bin/vncstop
-    fi
-  echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstop
-  echo "vncserver -kill :*" >>/usr/local/bin/vncstop
-  echo "rm -rf /username/.vnc/localhost:*.pid" >>/usr/local/bin/vncstop
-  echo "rm -rf /tmp/.X1-lock" >>/usr/local/bin/vncstop
-  echo "rm -rf /tmp/.X11-unix/X1" >>/usr/local/bin/vncstop
-    chmod +x /usr/local/bin/vncstop
-  if [[ -e "/usr/local/bin/fixvnc" ]]; then
-        rm -rf /usr/local/bin/fixvnc
-    fi
-  echo "pkill Xtigervnc" >>/usr/local/bin/fixvnc
-  echo "return \$?" >>/usr/local/bin/fixvnc
-    chmod +x /usr/local/bin/fixvnc
-
+  echo "vncserver -geometry 1600x900 -xstartup /bin/startlxqt" >>/bin/vncstart
+    chmod +x /bin/vncstart
+  vncstop
+  fixvnc
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
-
-
 }
 
 kde_mode() {
-	banner
+  add_user
+  package
+  banner
 	echo -e "${R} [${W}-${R}]${C} Installing KDE DESKTOP"${W}
 	apt update 
 	apt-get install udisks2 -y
@@ -318,65 +353,20 @@ kde_mode() {
   echo "dbus-launch" >>/usr/local/bin/vncstart
   echo "vncserver -geometry 1600x900 -xstartup /bin/startplasma-x11" >>/usr/local/bin/vncstart
   chmod +x /usr/local/bin/vncstart
-  if [[ -e "/usr/local/bin/vncstop" ]]; then
-        rm -rf /usr/local/bin/vncstop
-    fi
-  echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstop
-  echo "vncserver -kill :*" >>/usr/local/bin/vncstop
-  echo "rm -rf /username/.vnc/localhost:*.pid" >>/usr/local/bin/vncstop
-  echo "rm -rf /tmp/.X1-lock" >>/usr/local/bin/vncstop
-  echo "rm -rf /tmp/.X11-unix/X1" >>/usr/local/bin/vncstop
-    chmod +x /usr/local/bin/vncstop
-  if [[ -e "/usr/local/bin/fixvnc" ]]; then
-        rm -rf /usr/local/bin/fixvnc
-    fi
-  echo "pkill Xtigervnc" >>/usr/local/bin/fixvnc
-  echo "return \$?" >>/usr/local/bin/fixvnc
-    chmod +x /usr/local/bin/fixvnc
-
+   vncstop
+   fixvnc
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
 
 }
 
-		
-package() {
-	banner
-    echo -e "${R} [${W}-${R}]${C} Checking required packages..."${W}
-    apt update -y
-    apt install sudo -y
-    apt --fix-broken install udisks2 -y
-    rm /var/lib/dpkg/info/udisks2.postinst
-    echo "" > /var/lib/dpkg/info/udisks2.postinst
-    sudo dpkg --configure -a
-    sudo apt-mark hold udisks2
-    sudo apt-mark unhold gvfs-daemons
-    sudo dpkg --configure -a
-    packs=(sudo wget curl nano kali-menu kali-linux-core git qterminal mousepad librsvg2-common menu inetutils-tools dialog tightvncserver tigervnc-standalone-server tigervnc-tools dbus-x11 )
-    sudo dpkg --configure -a
-    for hulu in "${packs[@]}"; do
-        type -p "$hulu" &>/dev/null || {
-            echo -e "\n${R} [${W}-${R}]${G} Installing package : ${Y}$hulu${C}"${W}
-            sudo apt-get install "$hulu" -y --no-install-recommends
-        }
-    done
-    sudo apt update -y
-}
-
-fix_broken() {
-    banner
-    echo -e "${Y}Checking error and fix it..."${W}
-    sudo dpkg --configure -a
-     
-    sudo apt-get install --fix-broken keyboard-configuration -y
-}
-
-
 note() {
 banner
     echo -e " ${G} Successfully Installed !"${W}
     sleep 1
+    echo
+    echo -e " ${G}Type ${C}kali${G} to login as kali as normal user and ${C}kali -r${G}to login as root user"${W}
     echo
     echo -e " ${G}Type ${C}vncstart${G} to run Vncserver."${W}
     echo
@@ -390,7 +380,6 @@ banner
     echo
     echo -e " ${C}Set the Picture Quality to High for better Quality."${W}
     echo 
-
     echo -e " ${C}Click on Connect & Input the Password."${W}
     echo 
     echo -e " ${C}If you install the GNOME DESKKTOP os don't use Nethunter Kex"${W}
@@ -403,25 +392,6 @@ banner
 
 add_sound() {
 	echo "$(echo "bash ~/.sound" | cat - /data/data/com.termux/files/usr/bin/kali)" > /data/data/com.termux/files/usr/bin/kali
-
-}
-
-add_user() {
-	apt autoremove sudo -y
-    banner
-    read -p $' \e[1;31m[\e[0m\e[1;77m~\e[0m\e[1;31m]\e[0m\e[1;92m Input Username [Lowercase] : \e[0m\e[1;96m\en' user
-    echo -e "${W}"
-    read -p $' \e[1;31m[\e[0m\e[1;77m~\e[0m\e[1;31m]\e[0m\e[1;92m Input Password : \e[0m\e[1;96m\en' pass
-    echo -e "${W}"
-    deluser kali
-    useradd -m -s $(which bash) ${user}
-    echo "${user}:${pass}" | chpasswd
-    apt update -y
-    apt install sudo -y
-    echo "$user ALL=(ALL:ALL) ALL" >> /etc/sudoers
-    echo "proot-distro login --user $user kali" > /data/data/com.termux/files/usr/bin/kali
-    #chmod +x /data/data/com.termux/files/usr/bin/kali
-    clear
 
 }
 
@@ -439,22 +409,20 @@ customize() {
 	   sudo apt install plank -y
 	fi
 mkdir /home/${user}/.config/autostart/
-        touch /home/${user}/.config/autostart/plank.desktop
-        echo "[Desktop Entry]" >>/home/${user}/.config/autostart/plank.desktop
-        echo "Type=Application" >>/home/${user}/.config/autostart/plank.desktop
-        echo "Name=Plank" >>/home/${user}/.config/autostart/plank.desktop
-        echo "Exec=plank" >>/home/${user}/.config/autostart/plank.desktop
-        chmod +x /home/${user}/.config/autostart/plank.desktop
+        cat <<EOF > "/home/${user}/.config/autostart/plank.desktop"
+[Desktop Entry]
+Type=Application
+Name=Plank
+Exec=plank
+EOF
+chmod +x /home/${user}/.config/autostart/plank.desktop
 	sudo apt install zsh zsh-autosuggestions zsh-syntax-highlighting -y
     cp /etc/skel/.zshrc ~/
     sudo chsh -s $(which zsh) $(whoami)
 }
 
 #full_update
-add_user
-package
 select_desktop_type
-fix_broken
 firefox_install
 vlc_installer
 add_sound
