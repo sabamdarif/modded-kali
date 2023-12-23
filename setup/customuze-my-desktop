@@ -94,12 +94,17 @@ Terminal=false
 StartupNotify=false
 EOF
 mkdir ~/.local/share/applications
+if [[ ! -d "~/.local/share/applications" ]]; then
+    mkdir ~/.local/share/applications
+fi
 mv appsearch.desktop ~/.local/share/applications/
 chmod +x ~/.local/share/applications/appsearch.desktop
 if [[ ! -d "/home/${user}/.config/plank/dock1/launchers/" ]]; then
     mkdir /home/${user}/.config/plank/dock1/launchers/
 fi
 cp ~/.local/share/applications/appsearch.desktop /home/${user}/Desktop/
+sleep 0.5
+
 cat <<EOF > "/home/${user}/.config/plank/dock1/launchers/appsearch.dockitem"
 [PlankDockItemPreferences]
 Launcher=file:///home/${user}/.local/share/applications/appsearch.desktop
