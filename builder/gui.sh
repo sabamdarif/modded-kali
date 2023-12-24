@@ -158,11 +158,11 @@ vncstop() {
   if [[ -e "/bin/vncstop" ]]; then
         rm -rf /bin/vncstop
     fi
-      cat <<EOF > "/bin/vncstop"
-      #!/usr/bin/env bash
-      rm -rf /username/.vnc/localhost:*.pid
-      rm -rf /tmp/.X1-lock
-      rm -rf /tmp/.X11-unix/X1
+cat <<EOF > "/bin/vncstop"
+#!/usr/bin/env bash
+rm -rf /username/.vnc/localhost:*.pid
+rm -rf /tmp/.X1-lock
+rm -rf /tmp/.X11-unix/X1
 EOF
 chmod +x /bin/vncstop
 }
@@ -171,12 +171,12 @@ fixvnc() {
   if [[ -e "/bin/fixvnc" ]]; then
         rm -rf /bin/fixvnc
     fi
-  cat <<EOF > "/bin/vncstop"
-      #!/usr/bin/env bash
-      pkill Xtigervnc
-      rm -rf /username/.vnc/localhost:*.pid
-      rm -rf /tmp/.X1-lock
-      rm -rf /tmp/.X11-unix/X1
+cat <<EOF > "/bin/vncstop"
+#!/usr/bin/env bash
+pkill Xtigervnc
+rm -rf /username/.vnc/localhost:*.pid
+rm -rf /tmp/.X1-lock
+rm -rf /tmp/.X11-unix/X1
 EOF
 chmod +x /bin/vncstop
 }
@@ -193,13 +193,13 @@ xfce_mode() {
   if [[ ! -d "$HOME/.vnc" ]]; then
         mkdir -p "$HOME/.vnc"
     fi
-   if [[ -e "/usr/local/bin/vncstart" ]]; then
-        rm -rf /usr/local/bin/vncstart
+   if [[ -e "/bin/vncstart" ]]; then
+        rm -rf /bin/vncstart
     fi                                                                       
-    echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstart
-  echo "dbus-launch" >>/usr/local/bin/vncstart
-  echo "vncserver -geometry 1500x720  -xstartup /usr/bin/startxfce4" >>/usr/local/bin/vncstart
-  chmod +x /usr/local/bin/vncstart
+    echo "#!/usr/bin/env bash" >>/bin/vncstart
+  echo "dbus-launch" >>/bin/vncstart
+  echo "vncserver -geometry 1500x720  -xstartup /usr/bin/startxfce4" >>/bin/vncstart
+  chmod +x /bin/vncstart
   vncstop
   fixvnc
     echo "export DISPLAY=":1"" >> /etc/profile
@@ -243,10 +243,10 @@ chmod +x "$HOME/.vnc/xstartup"
 mkdir -p "/home/$user/.vnc"
 cp -r "$HOME/.vnc/xstartup" "/home/$user/.vnc/xstartup"
 chmod +x "/home/$user/.vnc/xstartup"
-   if [[ -e "/usr/local/bin/vncstart" ]]; then
-        rm -rf /usr/local/bin/vncstart
+   if [[ -e "/bin/vncstart" ]]; then
+        rm -rf /bin/vncstart
     fi
-  echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstart
+  echo "#!/usr/bin/env bash" >>/bin/vncstart
   echo "vncserver -geometry 2580x1080 " >>/bin/vncstart
     chmod +x /bin/vncstart
   vncstop
@@ -280,11 +280,11 @@ lxde_mode() {
   if [[ ! -d "$HOME/.vnc" ]]; then
         mkdir -p "$HOME/.vnc"
     fi
- if [[ -e "/usr/local/bin/vncstart" ]]; then
-        rm -rf /usr/local/bin/vncstart
+ if [[ -e "/bin/vncstart" ]]; then
+        rm -rf /bin/vncstart
     fi
-  echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstart
-  echo "dbus-launch" >>/usr/local/bin/vncstart
+  echo "#!/usr/bin/env bash" >>/bin/vncstart
+  echo "dbus-launch" >>/bin/vncstart
   echo "vncserver -geometry 1600x900 -name remote-desktop :1" >>/bin/vncstart
     chmod +x /bin/vncstart
   vncstop
@@ -313,11 +313,11 @@ lxqt_mode(){
   if [[ ! -d "$HOME/.vnc" ]]; then
         mkdir -p "$HOME/.vnc"
     fi
-if [[ -e "/usr/local/bin/vncstart" ]]; then
-        rm -rf /usr/local/bin/vncstart
+if [[ -e "/bin/vncstart" ]]; then
+        rm -rf /bin/vncstart
     fi
-  echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstart
-  echo "dbus-launch" >>/usr/local/bin/vncstart
+  echo "#!/usr/bin/env bash" >>/bin/vncstart
+  echo "dbus-launch" >>/bin/vncstart
   echo "vncserver -geometry 1600x900 -xstartup /bin/startlxqt" >>/bin/vncstart
     chmod +x /bin/vncstart
   vncstop
@@ -346,13 +346,13 @@ kde_mode() {
   if [[ ! -d "$HOME/.vnc" ]]; then
         mkdir -p "$HOME/.vnc"
     fi
-   if [[ -e "/usr/local/bin/vncstart" ]]; then
-        rm -rf /usr/local/bin/vncstart
+   if [[ -e "/bin/vncstart" ]]; then
+        rm -rf /bin/vncstart
     fi
-    echo "#!/usr/bin/env bash" >>/usr/local/bin/vncstart
-  echo "dbus-launch" >>/usr/local/bin/vncstart
-  echo "vncserver -geometry 1600x900 -xstartup /bin/startplasma-x11" >>/usr/local/bin/vncstart
-  chmod +x /usr/local/bin/vncstart
+    echo "#!/usr/bin/env bash" >>/bin/vncstart
+  echo "dbus-launch" >>/bin/vncstart
+  echo "vncserver -geometry 1600x900 -xstartup /bin/startplasma-x11" >>/bin/vncstart
+  chmod +x /bin/vncstart
    vncstop
    fixvnc
     echo "export DISPLAY=":1"" >> /etc/profile

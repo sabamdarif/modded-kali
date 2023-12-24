@@ -96,11 +96,28 @@ EOF
 mkdir ~/.local/share/applications
 mv appsearch.desktop ~/.local/share/applications/
 chmod +x ~/.local/share/applications/appsearch.desktop
-if [[ ! -d "/home/${user}/.config/plank/dock1/launchers/" ]]; then
-    mkdir /home/${user}/.config/plank/dock1/launchers/
+config_folder="/home/${user}/.config"
+plank_folder="${config_folder}/plank"
+dock_folder="${plank_folder}/dock1"
+launchers_folder="${dock_folder}/launchers"
+if [ ! -d "${config_folder}" ]; then
+    mkdir -p "${config_folder}"
+fi
+
+if [ ! -d "${plank_folder}" ]; then
+    mkdir -p "${plank_folder}"
+fi
+
+if [ ! -d "${dock_folder}" ]; then
+    mkdir -p "${dock_folder}"
+fi
+
+if [ ! -d "${launchers_folder}" ]; then
+    mkdir -p "${launchers_folder}"
 fi
 cp ~/.local/share/applications/appsearch.desktop /home/${user}/Desktop/
-cat <<EOF > "/home/${user}/.config/plank/dock1/launchers/appsearch.dockitem"
+cd ~
+cat <<EOF > ~/.config/plank/dock1/launchers/appsearch.dockitem
 [PlankDockItemPreferences]
 Launcher=file:///home/${user}/.local/share/applications/appsearch.desktop
 EOF
