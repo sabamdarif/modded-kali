@@ -150,7 +150,7 @@ select_desktop_type() {
 		gnome_mode
 	fi
 	if [[ $select_method == "" ]]; then
-		kfce_mode
+		xfce_mode
 	fi
 }
 
