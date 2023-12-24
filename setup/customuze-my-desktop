@@ -119,20 +119,13 @@ if [ ! -d "${launchers_folder}" ]; then
     mkdir -p "${launchers_folder}"
 fi
 cp ~/.local/share/applications/appsearch.desktop /home/${user}/Desktop/
-<<<<<<< HEAD
 cd ~
 cat <<EOF > ~/.config/plank/dock1/launchers/appsearch.dockitem
-=======
-sleep 0.5
-
-cat <<EOF > "/home/${user}/.config/plank/dock1/launchers/appsearch.dockitem"
->>>>>>> f0ddc3d6df0c2e499943e2df9bf8145cfb7d2fb4
 [PlankDockItemPreferences]
 Launcher=file:///home/${user}/.local/share/applications/appsearch.desktop
 EOF
 clear
 killall plank
-echo "${G} setup successfull.."${W}
 }
 
 function ask_edex() {
@@ -168,6 +161,7 @@ function clean_up() {
      rm -rf /home/${user}/WhiteSur-icon-theme WhiteSur-gtk-theme 
       clear
     echo "${C}SUCCESFULL"${W}
+    echo "${C}Type ${G}vncstop ${C}Then Restart Termux"${W}
 }
 
 check-up
