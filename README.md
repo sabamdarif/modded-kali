@@ -4,10 +4,9 @@
 
 <div align="center">
 
-[![GitHub stars](https://img.shields.io/github/stars/sabamdarif/modded-kali)](https://github.com/sabamdarif/modded-kali/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/sabamdarif/modded-kali)](https://github.com/sabamdarif/modded-kali/issues)
-[![GitHub license](https://img.shields.io/github/license/sabamdarif/modded-kali)](https://github.com/sabamdarif/modded-kali/blob/main/LICENSE)
-
+![GitHub Repo stars](https://img.shields.io/github/stars/sabamdarif/modded-kali)
+![GitHub issues](https://img.shields.io/github/issues/sabamdarif/modded-kali)
+![GitHub License](https://img.shields.io/github/license/sabamdarif/modded-kali)
 </div>
 
 ### Features:
