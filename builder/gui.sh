@@ -155,25 +155,16 @@ select_desktop_type() {
 }
 
 vncstop() {
-  if [[ -e "/bin/vncstop" ]]; then
+ if [[ -e "/bin/vncstop" ]]; then
         rm -rf /bin/vncstop
     fi
-cat <<EOF > "/bin/vncstop"
+    cat <<EOF > "/bin/vncstop"
 #!/usr/bin/env bash
-rm -rf /username/.vnc/localhost:*.pid
-rm -rf /tmp/.X1-lock
-rm -rf /tmp/.X11-unix/X1
-EOF
-chmod +x /bin/vncstop
-}
-
-fixvnc() {
-  if [[ -e "/bin/fixvnc" ]]; then
-        rm -rf /bin/fixvnc
-    fi
-cat <<EOF > "/bin/vncstop"
-#!/usr/bin/env bash
-pkill Xtigervnc
+if [ "\$1" == "-f" ]; then
+    pkill Xtigervnc
+else
+    vncserver -kill :*
+fi
 rm -rf /username/.vnc/localhost:*.pid
 rm -rf /tmp/.X1-lock
 rm -rf /tmp/.X11-unix/X1
@@ -201,7 +192,6 @@ xfce_mode() {
   echo "vncserver -geometry 1500x720  -xstartup /usr/bin/startxfce4" >>/bin/vncstart
   chmod +x /bin/vncstart
   vncstop
-  fixvnc
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
@@ -250,8 +240,7 @@ chmod +x "/home/$user/.vnc/xstartup"
   echo "vncserver -geometry 2580x1080 " >>/bin/vncstart
     chmod +x /bin/vncstart
   vncstop
-  fixvnc
-  echo "export DISPLAY=":1"" >> /etc/profile
+  #echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
  echo -e "${R} [${W}-${R}]${C} Fix Vnc Login Issue.."${W}
@@ -288,7 +277,6 @@ lxde_mode() {
   echo "vncserver -geometry 1600x900 -name remote-desktop :1" >>/bin/vncstart
     chmod +x /bin/vncstart
   vncstop
-  fixvnc
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
@@ -321,7 +309,6 @@ if [[ -e "/bin/vncstart" ]]; then
   echo "vncserver -geometry 1600x900 -xstartup /bin/startlxqt" >>/bin/vncstart
     chmod +x /bin/vncstart
   vncstop
-  fixvnc
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
@@ -354,7 +341,6 @@ kde_mode() {
   echo "vncserver -geometry 1600x900 -xstartup /bin/startplasma-x11" >>/bin/vncstart
   chmod +x /bin/vncstart
    vncstop
-   fixvnc
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
@@ -365,7 +351,9 @@ banner
     echo -e " ${G} Successfully Installed !"${W}
     sleep 1
     echo
-    echo -e " ${G}Type ${C}kali${G} to login as kali as normal user and ${C}kali -r${G}to login as root user"${W}
+    echo -e " ${G}Type ${C}kali${G} to login as normal user"${W}
+    echo
+    echo -e " ${G}Type ${C}kali -r${G} to login as root user"${W}
     echo
     echo -e " ${G}Type ${C}vncstart${G} to run Vncserver."${W}
     echo
@@ -381,7 +369,7 @@ banner
     echo 
     echo -e " ${C}Click on Connect & Input the Password."${W}
     echo 
-    echo -e " ${C}If you install the GNOME DESKKTOP os don't use Nethunter Kex"${W}
+    echo -e " ${C}If you install the GNOME DESKKTOP use UltraVnc mode in Nethunter Kex"${W}
     echo
     echo -e " ${C}Enjoy :D"${W}
     echo
