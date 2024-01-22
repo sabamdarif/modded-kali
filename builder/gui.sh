@@ -41,6 +41,53 @@ EOF
 
 }
 
+ask() {
+  banner
+	echo
+	echo -e "${R} [${W}-${R}]${C} Select Desktop Type"${W}
+	echo
+	echo "${C}1. XFCE4 (recommended)"${W}
+	echo
+	echo "${C}2. LXDE"${W}
+	echo
+	echo "${C}3. LXQT"${W}
+	echo
+	echo "${C}4. KDE"${W}
+	echo
+	echo "${C}5. GNOME"${W}
+	echo
+	read -p "${Y}Select option(default 1): "${W} select_desktop
+	echo
+  sleep 0.5
+  banner
+  read -p "${G}Do you to install VLC (y/n) "${w} ask_vlc
+  sleep 0.5
+  echo -e "${R} [${W}-${R}]${C} Select Browser"${W}
+	echo
+	echo "${C}1. Firefox (recommended)"${W}
+	echo
+	echo "${C}2. Chromium"${W}
+	echo
+	read -p "${Y}Select option(default 1): "${W} ask_browser
+}
+
+select_desktop_type() {
+	banner
+	if [[ $select_desktop == "1" ]]; then
+		xfce_mode
+	elif [[ $select_desktop == "2" ]]; then
+		lxde_mode
+	elif [[ $select_desktop == "3" ]]; then
+		lxqt_mode
+	elif [[ $select_desktop == "4" ]]; then
+		kde_mode
+	elif [[ $select_desktop == "5" ]]; then
+		gnome_mode
+	elif [[ $select_desktop == "" ]]; then
+		xfce_mode
+	fi
+}
+
 fix_broken() {
     banner
     echo -e "${Y}Checking error and fix it..."${W}
@@ -63,41 +110,64 @@ package() {
     sudo dpkg --configure -a
     packs=(sudo wget curl nano kali-menu kali-linux-core git qterminal mousepad librsvg2-common menu inetutils-tools dialog tightvncserver tigervnc-standalone-server tigervnc-tools dbus-x11 )
     sudo dpkg --configure -a
-    for hulu in "${packs[@]}"; do
-        type -p "$hulu" &>/dev/null || {
-            echo -e "\n${R} [${W}-${R}]${G} Installing package : ${Y}$hulu${C}"${W}
-            sudo apt-get install "$hulu" -y --no-install-recommends
+    for packs_name in "${packs[@]}"; do
+        type -p "$packs_name" &>/dev/null || {
+            echo -e "\n${R} [${W}-${R}]${G} Installing package : ${Y}$packs_name${C}"${W}
+            sudo apt-get install "$packs_name" -y --no-install-recommends
         }
     done
     fix_broken
 }
 
-firefox_install() {
-		clear
-		banner
-		sleep 1
-		echo "${Y}Checking if  Firefox browser installed already.."${W}
+firefox_installer() {
+    echo "${Y}Checking if  Firefox browser installed already.."${W}
 		echo
 		echo
 		if [[ $(command -v firefox) ]]; then
 			echo "${C}Firefox is already installed.."${W}
-			sleep .5
+			sleep 0.5
 			clear
 		else
 			clear
-			sleep 1
 			echo "${G}Firefox not found.Installing now.."${W}
 			echo
 			echo
-			sudo apt update;sudo apt install firefox-esr -y 
+      sudo apt install firefox-esr -y 
 		fi
+}
+
+chromium_installer() {
+  echo "${Y}Checking if  Chromium browser installed already.."${W}
+		echo
+		echo
+		if [[ $(command -v chromium) ]]; then
+			echo "${C}Chromium is already installed.."${W}
+			sleep 0.5
+			clear
+		else
+			clear
+			echo "${G}Chromium not found.Installing now.."${W}
+			echo
+			echo
+      sudo apt install chromium -y 
+		fi
+}
+
+browser_installer() {
+		banner
+    if [[$ask_browser == "1"]]; then
+    firefox_installer
+    elif [[$ask_browser == "2"]]; then 
+    chromium_installer
+    elif [[$ask_browser == " "]]; then
+    firefox_installer
+    fi
+    
 }
 	
 vlc_installer() {
-	clear
 	banner
-  read -p "${G}Do you to install VLC (y/n) "${w} answer
-if [ "$answer" == "y" ]; then
+if [ "$ask_vlc" == "y" ]; then
 	echo "${Y}Checking if vlc is available or not"${W}
 	if [[ $(command -v vlc) ]]; then
 		echo
@@ -113,45 +183,6 @@ else
     echo "${C}Canceling...."${W}
     sleep 1.2
 fi
-}
-
-select_desktop_type() {
-	clear
-	banner
-	echo
-	echo -e "${R} [${W}-${R}]${C} Select Desktop Type"${W}
-	echo
-	echo "${C}1. XFCE4 (recommended)"${W}
-	echo
-	echo "${C}2. LXDE"${W}
-	echo
-	echo "${C}3. LXQT"${W}
-	echo
-	echo "${C}4. KDE"${W}
-	echo
-	echo "${C}5. GNOME"${W}
-	echo
-	read -p "${Y}Select option(default 1): "${W} select_method
-	echo
-	sleep 1.5
-	if [[ $select_method == "1" ]]; then
-		xfce_mode
-	fi
-	if [[ $select_method == "2" ]]; then
-		lxde_mode
-	fi
-	if [[ $select_method == "3" ]]; then
-		lxqt_mode
-	fi
-	if [[ $select_method == "4" ]]; then
-		kde_mode
-	fi
-	if [[ $select_method == "5" ]]; then
-		gnome_mode
-	fi
-	if [[ $select_method == "" ]]; then
-		xfce_mode
-	fi
 }
 
 vncstop() {
@@ -204,16 +235,41 @@ xfce_mode() {
 
 gnome_mode() {
 	banner
-	echo -e "${R} [${W}-${R}]${C} Installing GNOME DESKTOP"${W}
-	apt update
-	apt install gnome-shell gnome-terminal gnome-tweaks -y
+  echo "${G}Select Gnome Desktop Type..."${W}
+	echo
+	echo "${Y}1. Core (~2Gb | Recomended)"${W}
+	echo
+	echo "${Y}2. Full (~3.5GB of space)"${W}
+	echo
+	read -p "${Y}select an option (Default 1): "${W} answer_gnome_desktop
+	echo
+  echo "${G}Updating System"${W}
+  apt-get update
+  if [[ ${answer_gnome_desktop} == "1" ]]; then
+  banner
+        echo "${G}Installing Gnome Core..."${W}
+        echo
+        apt install gnome-shell gnome-terminal -y
+    elif [[ ${answer_gnome_desktop} == "2" ]]; then
+    banner
+        echo "${G}Installing Gnome Full..."${W}
+        echo
+        apt-get install kali-desktop-gnome -y
+    elif [[ ${answer_gnome_desktop} == "" ]]; then
+    banner
+        echo "${G}Installing Gnome Core..."${W}
+        echo
+        apt install gnome-shell gnome-terminal -y
+    fi
 	dpkg --configure -a
 	apt --fix-broken install -y
-	packs=(wget curl nautilus nano gedit tigervnc-standalone-server tigervnc-tools dbus-x11 )
-	for hulu in "${packs[@]}"; do
-        type -p "$hulu" &>/dev/null || {
-            echo -e "\n${R} [${W}-${R}]${G} Installing package : ${Y}$hulu${C}"${W}
-            sudo apt-get install "$hulu" -y --no-install-recommends
+  banner
+  echo "${Y}Installing Required Packages"${W}
+	packs=(wget curl nautilus nano gedit gnome-software gnome-tweaks gnome-shell-extension-manager tigervnc-standalone-server tigervnc-tools dbus-x11 )
+	for packs_name in "${packs[@]}"; do
+        type -p "$packs_name" &>/dev/null || {
+            echo -e "\n${R} [${W}-${R}]${G} Installing package : ${Y}$packs_name${C}"${W}
+            sudo apt-get install "$packs_name" -y --no-install-recommends
         }
     done
     echo -e "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
@@ -226,13 +282,12 @@ fi
 cat <<EOF > "$HOME/.vnc/xstartup"
 export XDG_CURRENT_DESKTOP="GNOME"
 service dbus start
-echo "gnome-shell --x11    
+gnome-shell --x11    
 EOF
 chmod +x "$HOME/.vnc/xstartup"
-
-mkdir -p "/home/$user/.vnc"
-cp -r "$HOME/.vnc/xstartup" "/home/$user/.vnc/xstartup"
-chmod +x "/home/$user/.vnc/xstartup"
+# mkdir -p "/home/$user/.vnc"
+# cp -r "$HOME/.vnc/xstartup" "/home/$user/.vnc/xstartup"
+# chmod +x "/home/$user/.vnc/xstartup"
    if [[ -e "/bin/vncstart" ]]; then
         rm -rf /bin/vncstart
     fi
@@ -247,6 +302,9 @@ chmod +x "/home/$user/.vnc/xstartup"
    for file in $(find /usr -type f -iname "*login1*"); do rm -rf $file
    done
    echo "proot-distro login kali" > /data/data/com.termux/files/usr/bin/kali
+   sudo apt install zsh zsh-autosuggestions zsh-syntax-highlighting -y
+    cp /etc/skel/.zshrc ~/
+    sudo chsh -s $(which zsh) $(whoami)
 }
 
 lxde_mode() {
@@ -350,28 +408,34 @@ note() {
 banner
     echo -e " ${G} Successfully Installed !"${W}
     sleep 1
+    if [[ $select_desktop == "5" ]]; then
     echo
-    echo -e " ${G}Type ${C}kali${G} to login as normal user"${W}
+    echo -e " ${C}Type ${G}kali${C} to login into kali cli (as root user)"${W}
     echo
-    echo -e " ${G}Type ${C}kali -r${G} to login as root user"${W}
+    echo -e " ${C}You cannot add any user in GNOME Desktop"${W}
     echo
-    echo -e " ${G}Type ${C}vncstart${G} to run Vncserver."${W}
+    echo -e " ${C}You need to use as root user"${W}
+    else
     echo
-    echo -e " ${G}Type ${C}vncstop${G} to stop Vncserver."${W}
+    echo -e " ${C}Type ${G}kali${C} to login as normal user"${W}
     echo
-    echo -e " ${C}Install VNC VIEWER OR Nethunter Kex on your Device."${W}
+    echo -e " ${C}Type ${G}kali -r${C} to login as root user"${W}
     echo
-    echo -e " ${C}Open VNC VIEWER & Click on + Button."${W}
+    fi
+    echo
+    echo -e " ${C}Type ${G}vncstart${C} to run Vncserver."${W}
+    echo
+    echo -e " ${C}Type ${G}vncstop${C} to stop Vncserver."${W}
+    echo
+    echo -e " ${C}Open VNC VIEWER or Nethunter Kex & Click on + Button."${W}
     echo
     echo -e " ${C}Enter the Address localhost:1 & Name anything you like."${W}
     echo
-    echo -e " ${C}Set the Picture Quality to High for better Quality."${W}
-    echo 
     echo -e " ${C}Click on Connect & Input the Password."${W}
     echo 
-    echo -e " ${C}If you install the GNOME DESKKTOP use UltraVnc mode in Nethunter Kex"${W}
+    echo -e " ${C}If you install the GNOME DESKKTOP you may need to use UltraVnc mode in Nethunter Kex."${W}
     echo
-    echo -e " ${C}Enjoy :D"${W}
+    echo -e " ${C}Enjoy"${W}
     echo
     echo
 
@@ -379,7 +443,6 @@ banner
 
 add_sound() {
 	echo "$(echo "bash ~/.sound" | cat - /data/data/com.termux/files/usr/bin/kali)" > /data/data/com.termux/files/usr/bin/kali
-
 }
 
 customize() {
@@ -408,9 +471,9 @@ chmod +x /home/${user}/.config/autostart/plank.desktop
     sudo chsh -s $(which zsh) $(whoami)
 }
 
-#full_update
+ask
 select_desktop_type
-firefox_install
+browser_installer
 vlc_installer
 add_sound
 note
