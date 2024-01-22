@@ -46,9 +46,9 @@ function zsh_setup() {
 }
 
 function ask_theme() {
-read -p "${G}Do you want to setup MacOS themes? (y/n) "${w} answer
+read -p "${G}Do you want to setup MacOS themes? (y/n) "${w} ask_macos_theme
 
-if [ "$answer" == "y" ]; then
+if [ "$ask_macos_theme" == "y" ]; then
 	macos_mode
 else
     echo "${C}Canceling...."${W}
@@ -129,9 +129,9 @@ killall plank
 }
 
 function ask_edex() {
-read -p "${G}Do you to install EdexUi(Hollywood Style Terminal)? (y/n) "${w} answer
+read -p "${G}Do you to install EdexUi(Hollywood Style Terminal)? (y/n) "${w} ask_edex_terminal
 
-if [ "$answer" == "y" ]; then
+if [ "$ask_edex_terminal" == "y" ]; then
 	setup_edex
 else
     echo "${C}Canceling...."${W}
@@ -157,6 +157,7 @@ StartupNotify=false
 EOF
 	chmod +x /home/${user}/.local/share/applications/edex-ui.desktop
 }
+
 function clean_up() {
      rm -rf /home/${user}/WhiteSur-icon-theme WhiteSur-gtk-theme 
       clear
