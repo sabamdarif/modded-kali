@@ -30,15 +30,20 @@ add_user() {
     echo "$user ALL=(ALL:ALL) ALL" >> /etc/sudoers
     #echo "proot-distro login --user $user kali" > /data/data/com.termux/files/usr/bin/kali
     cat <<EOF > "/data/data/com.termux/files/usr/bin/kali"
-if [ "\$1" == "-r" ]; then
+if [ "\$1" = "-r" ]; then
     proot-distro login kali
 else
     proot-distro login --user "$user" kali
-fi 
+fi
 EOF
     #chmod +x /data/data/com.termux/files/usr/bin/kali
     clear
 
+}
+
+update_sys() {
+  echo "${G}Updating System..."${W}
+  apt-get update
 }
 
 ask() {
@@ -71,7 +76,7 @@ ask() {
 	read -p "${Y}Select option(default 1): "${W} ask_browser
 }
 
-select_desktop_type() {
+install_desktop_type() {
 	banner
 	if [[ $select_desktop == "1" ]]; then
 		xfce_mode
@@ -91,29 +96,27 @@ select_desktop_type() {
 fix_broken() {
     banner
     echo -e "${Y}Checking error and fix it..."${W}
-    sudo dpkg --configure -a
-     
-    sudo apt-get install --fix-broken keyboard-configuration -y
+     dpkg --configure -a
+     apt-get install --fix-broken keyboard-configuration -y
 }
 
 package() {
   banner
     echo -e "${R} [${W}-${R}]${C} Checking required packages..."${W}
     apt update -y
-    apt install sudo -y
     apt --fix-broken install udisks2 -y
     rm /var/lib/dpkg/info/udisks2.postinst
     echo "" > /var/lib/dpkg/info/udisks2.postinst
-    sudo dpkg --configure -a
-    sudo apt-mark hold udisks2
-    sudo apt-mark unhold gvfs-daemons
-    sudo dpkg --configure -a
+     dpkg --configure -a
+     apt-mark hold udisks2
+     apt-mark unhold gvfs-daemons
+     dpkg --configure -a
     packs=(sudo wget curl nano kali-menu kali-linux-core git qterminal mousepad librsvg2-common menu inetutils-tools dialog tightvncserver tigervnc-standalone-server tigervnc-tools dbus-x11 )
-    sudo dpkg --configure -a
+     dpkg --configure -a
     for packs_name in "${packs[@]}"; do
         type -p "$packs_name" &>/dev/null || {
             echo -e "\n${R} [${W}-${R}]${G} Installing package : ${Y}$packs_name${C}"${W}
-            sudo apt-get install "$packs_name" -y --no-install-recommends
+             apt-get install "$packs_name" -y --no-install-recommends
         }
     done
     fix_broken
@@ -132,7 +135,7 @@ firefox_installer() {
 			echo "${G}Firefox not found.Installing now.."${W}
 			echo
 			echo
-      sudo apt install firefox-esr -y 
+       apt install firefox-esr -y 
 		fi
 }
 
@@ -149,7 +152,7 @@ chromium_installer() {
 			echo "${G}Chromium not found.Installing now.."${W}
 			echo
 			echo
-      sudo apt install chromium -y 
+       apt install chromium -y 
 		fi
 }
 
@@ -177,7 +180,7 @@ if [ "$ask_vlc" == "y" ]; then
 		echo "${G}vlc  is not installed. Installing vlc.."${W}
 		echo
 		sleep 1
-		sudo apt update && sudo apt install vlc -y
+	 apt update && apt install vlc -y
 	fi
 else
     echo "${C}Canceling...."${W}
@@ -208,8 +211,7 @@ xfce_mode() {
   package
   banner
 	echo -e "${R} [${W}-${R}]${C} Installing XFCE DESKTOP"${W}
-	apt update
-       sudo apt install xfce4* kali-themes -y
+        apt install xfce4* kali-themes -y
        banner
        echo -e "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
   if [[ ! -d "$HOME/.vnc" ]]; then
@@ -243,8 +245,6 @@ gnome_mode() {
 	echo
 	read -p "${Y}select an option (Default 1): "${W} answer_gnome_desktop
 	echo
-  echo "${G}Updating System"${W}
-  apt-get update
   if [[ ${answer_gnome_desktop} == "1" ]]; then
   banner
         echo "${G}Installing Gnome Core..."${W}
@@ -269,7 +269,7 @@ gnome_mode() {
 	for packs_name in "${packs[@]}"; do
         type -p "$packs_name" &>/dev/null || {
             echo -e "\n${R} [${W}-${R}]${G} Installing package : ${Y}$packs_name${C}"${W}
-            sudo apt-get install "$packs_name" -y --no-install-recommends
+             apt-get install "$packs_name" -y --no-install-recommends
         }
     done
     echo -e "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
@@ -302,9 +302,9 @@ chmod +x "$HOME/.vnc/xstartup"
    for file in $(find /usr -type f -iname "*login1*"); do rm -rf $file
    done
    echo "proot-distro login kali" > /data/data/com.termux/files/usr/bin/kali
-   sudo apt install zsh zsh-autosuggestions zsh-syntax-highlighting -y
+    apt install zsh zsh-autosuggestions zsh-syntax-highlighting -y
     cp /etc/skel/.zshrc ~/
-    sudo chsh -s $(which zsh) $(whoami)
+     chsh -s $(which zsh) $(whoami)
 }
 
 lxde_mode() {
@@ -312,12 +312,11 @@ lxde_mode() {
   package
   banner
 	echo -e "${R} [${W}-${R}]${C} Installing LXDE DESKTOP"${W}
-	apt update
-	sudo apt install lxde lxterminal kali-themes -y
+	 apt install lxde lxterminal kali-themes -y
 	apt-get install udisks2 -y
 	echo " " > /var/lib/dpkg/info/udisks2.postinst
 	apt-mark hold udisks2
-	apt-get install sudo tzdata -y
+	apt-get install  tzdata -y
 	apt-get install lxde lxterminal kali-themes -y
 	mv /usr/bin/lxpolkit /usr/bin/lxpolkit.bak
 	apt-get --fix-broken install -y
@@ -345,11 +344,10 @@ lxqt_mode(){
   package
   banner
 	echo -e "${R} [${W}-${R}]${C} Installing LXQT DESKTOP"${W}
-	apt-get update
 	apt-get install udisks2 -y
 	echo " " > /var/lib/dpkg/info/udisks2.postinst
 	apt-mark hold udisks2
-	apt-get install sudo tzdata -y
+	apt-get install  tzdata -y
 	apt-get install lxqt qterminal kali-themes -y
 	apt-get install tigervnc-standalone-server dbus-x11 -y
 	apt-get --fix-broken install -y
@@ -377,11 +375,10 @@ kde_mode() {
   package
   banner
 	echo -e "${R} [${W}-${R}]${C} Installing KDE DESKTOP"${W}
-	apt update 
 	apt-get install udisks2 -y
 	echo " " > /var/lib/dpkg/info/udisks2.postinst
 	apt-mark hold udisks2
-	apt-get install sudo tzdata -y
+	apt-get install  tzdata -y
 	apt-get install kde-plasma-desktop konsole -y
 	apt-get install tigervnc-standalone-server dbus-x11 -y
 	apt-get --fix-broken install -y
@@ -415,6 +412,13 @@ banner
     echo -e " ${C}You cannot add any user in GNOME Desktop"${W}
     echo
     echo -e " ${C}You need to use as root user"${W}
+    elif [[ $select_desktop == "1" ]]; then
+    echo -e " ${C}Type ${G}kali${C} to login as normal user"${W}
+    echo
+    echo -e "${C}Then type ${G}./customuze-my-desktop ${C}to finish up the setup"
+    echo
+    echo -e " ${C}Type ${G}kali -r${C} to login as root user"${W}
+    echo
     else
     echo
     echo -e " ${C}Type ${G}kali${C} to login as normal user"${W}
@@ -446,7 +450,6 @@ add_sound() {
 }
 
 customize() {
-          sudo apt update
 	if [[ $(command -v plank) ]]; then
 	echo "${G}Plank is already installed .."${W}
         sleep .5 
@@ -456,7 +459,7 @@ customize() {
 	   sleep 1 
 	   echo "${G}Plank not found.Installing now.."${W}
 	   echo 
-	   sudo apt install plank -y
+	    apt install plank -y
 	fi
 mkdir /home/${user}/.config/autostart/
         cat <<EOF > "/home/${user}/.config/autostart/plank.desktop"
@@ -466,13 +469,14 @@ Name=Plank
 Exec=plank
 EOF
 chmod +x /home/${user}/.config/autostart/plank.desktop
-	sudo apt install zsh zsh-autosuggestions zsh-syntax-highlighting -y
+	 apt install zsh zsh-autosuggestions zsh-syntax-highlighting -y
     cp /etc/skel/.zshrc ~/
-    sudo chsh -s $(which zsh) $(whoami)
+     chsh -s $(which zsh) $(whoami)
 }
 
 ask
-select_desktop_type
+update_sys
+install_desktop_type
 browser_installer
 vlc_installer
 add_sound
