@@ -9,7 +9,7 @@
 ![GitHub License](https://img.shields.io/github/license/sabamdarif/modded-kali)
 </div>
 
-### Features:
+### FEATURE:
 
 - :speaker: Fixed Audio Output
 - :globe_with_meridians: 2 Browsers (Chromium & Mozilla Firefox)
@@ -19,7 +19,7 @@
 - :hammer: Install XFCE, LXDE, LXQT, KDE, or GNOME Desktop
 - :art: More customization (new styles added and new fonts etc...)
 
-### Installation:
+### INSTALLATION:
 
 1. Firstly install [Termux](https://termux.com) apk from [HERE](https://f-droid.org/repo/com.termux_118.apk)
 2. Secondly Clone the Repository & Run the setup File
@@ -33,13 +33,34 @@
    - `bash gui.sh`
    - Now select **KFCE**, **KDE**, **LXDE**, **LXQT** OR **GNOME** Desktop (any one)
 
-<details>
+<!-- <details>
 <summary><b><code>DEMO IMAGES: </code></b></summary>
 
 |GNOME|LXDE|LXQT|KDE|
 |--|--|--|--|
 |![img](image/demo-gnome.png)|![img](image/demo-lxde.png)|![img](image/demo-lxqt.png)|![img](/image/demo-kde.png)|
 
+</details> -->
+### DEMO IMAGES:
+<details></br>
+<summary><b><code>Xfce Desktop</code></b></summary>
+<p align="center"><img src="image/demo-xfce.png"</p>
+</details>
+<details></br>
+<summary><b><code>Gnome Desktop</code></b></summary>
+<p align="center"><img src="image/demo-gnome.png"</p>
+</details>
+<details></br>
+<summary><b><code>Lxde Desktop</code></b></summary>
+<p align="center"><img src="image/demo-lxde.png"</p>
+</details>
+<details></br>
+<summary><b><code>Lxqt Desktop</code></b></summary>
+<p align="center"><img src="image/demo-lxqt.png"</p>
+</details>
+<details></br>
+<summary><b><code>Kde Desktop</code></b></summary>
+<p align="center"><img src="image/demo-kde.png"</p>
 </details>
 
 3. **You have to note your VNC password !!**
@@ -66,6 +87,9 @@
 - **Type `vncstop -f` to stop Vncserver forcefully**
 - **Type `bash remove.sh` to remove KALI**
 
+### HOW TO USE IT WITH OFFICIAL NETHUNTER:
+- **Install `minimal` or `nano` variant of nethunter**
+- **run:-** `wget https://raw.githubusercontent.com/sabamdarif/modded-kali/main/builder/gui.sh ; bash gui.sh `
 ### ISSUES:
 - **Issue:-** Vnc server related issue like *vnc autostop* , *Apps not showing*
 - **Solution:-** Login into root user using `kali -r` then launch vncserver

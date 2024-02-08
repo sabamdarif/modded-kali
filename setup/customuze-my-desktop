@@ -17,6 +17,14 @@ printf "\033[32m subscribe my YouTube Channel Hello Android \033[0m\n"
 
 }
 
+function setup_vnc_pass() {
+    echo "${G}Create Your VNC Password"${W}
+    vncstart
+    sleep 60
+    check-up
+    vncstop
+}
+
 function check-up() {
 if ps -ef | grep -v grep | grep vncserver > /dev/null
 then
@@ -49,21 +57,21 @@ function ask_theme() {
 read -p "${G}Do you want to setup MacOS themes? (y/n) "${w} ask_macos_theme
 
 if [ "$ask_macos_theme" == "y" ]; then
-	macos_mode
+	macos_theme
 else
     echo "${C}Canceling...."${W}
     sleep 1.5
 fi
 }
 
-function macos_mode() {
+function macos_theme() {
 	banner
 	git clone --depth=1 https://github.com/vinceliuice/WhiteSur-gtk-theme /home/${user}/WhiteSur-gtk-theme
 	sudo chmod +x /home/${user}/WhiteSur-gtk-theme/install.sh
         sudo bash /home/${user}/WhiteSur-gtk-theme/install.sh
 #dbus-launch xfconf-query -c xfce4-desktop -np '/desktop-icons/style' -t 'int' -s '0'
 #sleep 1
-dbus-launch xfconf-query -c xsettings -p /Net/ThemeName -s "WhiteSur-Light"
+#dbus-launch xfconf-query -c xsettings -p /Net/ThemeName -s "WhiteSur-Light"
 }
 
 function app_menu() {
@@ -118,12 +126,12 @@ fi
 if [ ! -d "${launchers_folder}" ]; then
     mkdir -p "${launchers_folder}"
 fi
-cp ~/.local/share/applications/appsearch.desktop /home/${user}/Desktop/
 cd ~
-cat <<EOF > ~/.config/plank/dock1/launchers/appsearch.dockitem
+cat <<EOF > appsearch.dockitem
 [PlankDockItemPreferences]
 Launcher=file:///home/${user}/.local/share/applications/appsearch.desktop
 EOF
+mv appsearch.dockitem ~/.config/plank/dock1/launchers
 clear
 killall plank
 }
@@ -158,17 +166,30 @@ EOF
 	chmod +x /home/${user}/.local/share/applications/edex-ui.desktop
 }
 
-function clean_up() {
-     rm -rf /home/${user}/WhiteSur-icon-theme WhiteSur-gtk-theme 
-      clear
-    echo "${C}SUCCESFULL"${W}
-    echo "${C}Type ${G}vncstop ${C}Then Restart Termux"${W}
+function finish_setup() {
+#     sleep 10
+# dbus-launch xfconf-query -c xfce4-desktop -np '/desktop-icons/style' -t 'int' -s '0'
+sleep 10
+dbus-launch xfconf-query -c xsettings -p /Net/ThemeName -s "WhiteSur-Light"
+sleep 10
+dbus-launch xfconf-query -c xfwm4 -p /general/theme -s "WhiteSur-Light"
+sleep 10
+dbus-launch xfconf-query -c xfwm4 -p /general/show_dock_shadow -s false
+sleep 10
+rm customuze-my-desktop
 }
 
-check-up
+function clean_up() {
+     rm -rf /home/${user}/WhiteSur-icon-theme WhiteSur-gtk-theme
+      clear
+    echo "${C}SUCCESFULL"${W}
+    echo "${C}Now Exit Kali And Restart Termux"${W}
+}
+
+setup_vnc_pass
 ask_theme
-setup_plank
 zsh_setup
 app_menu
+setup_plank
 ask_edex
 clean_up
