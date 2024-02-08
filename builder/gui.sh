@@ -67,6 +67,8 @@ ask() {
   banner
   read -p "${G}Do you to install VLC (y/n) "${w} ask_vlc
   sleep 0.5
+  read -p "${G}Do you to install Pi-Apps Store (y/n) "${w} ask_piapps
+  sleep 0.5
   echo -e "${R} [${W}-${R}]${C} Select Browser"${W}
 	echo
 	echo "${C}1. Firefox (recommended)"${W}
@@ -183,9 +185,18 @@ if [ "$ask_vlc" == "y" ]; then
 	 apt update && apt install vlc -y
 	fi
 else
-    echo "${C}Canceling...."${W}
+    echo "${C}Canceling Vlc installation ..."${W}
     sleep 1.2
 fi
+}
+
+pi_store_installer() {
+  if [ "$ask_piapps" == "y" ]; then
+  echo "${Y}Installing Pi-Apps Store"${W}
+  wget -qO- https://raw.githubusercontent.com/Botspot/pi-apps/master/install | bash
+  else
+  echo "${C}Canceling Pi-Apps installation ..."${W}
+    sleep 1.2
 }
 
 vncstop() {
