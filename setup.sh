@@ -113,12 +113,12 @@ if [[ `command -v pulseaudio` && `command -v proot-distro` && `command -v wget` 
         echo -e "\n${R} [${W}-${R}]${G} Packages already installed."${W}
     else
         packs=(pulseaudio proot proot-distro wget)
-        for hulu in "${packs[@]}"; do
-            type -p "$hulu" &>/dev/null || {
-                echo -e "\n${R} [${W}-${R}]${G} Installing package : ${Y}$hulu${C}"${W}
+        for pack_name in "${packs[@]}"; do
+            type -p "$pack_name" &>/dev/null || {
+                echo -e "\n${R} [${W}-${R}]${G} Installing package : ${Y}$pack_name${C}"${W}
                 apt update -y
                 apt upgrade -y
-                apt install "$hulu" -y
+                apt install "$pack_name" -y
             }
         done
     fi
@@ -154,12 +154,12 @@ install_rootfs() {
 add_sound() {
     banner
     echo -e "\n${R} [${W}-${R}]${C} Fixing Sound Problem..."${W}
-    if [[ ! -e "$HOME/.sound" ]]; then
-        touch $HOME/.sound
+    if [[ ! -e "$HOME/.kali-sound-service" ]]; then
+        touch $HOME/.kali-sound-service
     fi
 
-    echo "pulseaudio --start --exit-idle-time=-1" > $HOME/.sound
-    echo "pacmd load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" >> $HOME/.sound
+    echo "pulseaudio --start --exit-idle-time=-1" > $HOME/.kali-sound-service
+    echo "pacmd load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" >> $HOME/.kali-sound-service
 }
 
 notes() {

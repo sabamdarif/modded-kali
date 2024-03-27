@@ -199,7 +199,7 @@ if [ "\$1" == "-f" ]; then
 else
     vncserver -kill :*
 fi
-rm -rf /username/.vnc/localhost:*.pid
+rm -rf /$user/.vnc/localhost:*.pid
 rm -rf /tmp/.X1-lock
 rm -rf /tmp/.X11-unix/X1
 EOF
@@ -236,6 +236,8 @@ xfce_mode() {
 }
 
 gnome_mode() {
+  add_user
+  package
 	banner
   echo "${G}Select Gnome Desktop Type..."${W}
 	echo
@@ -249,29 +251,20 @@ gnome_mode() {
   banner
         echo "${G}Installing Gnome Core..."${W}
         echo
-        apt install gnome-shell gnome-terminal -y
+        apt install gnome-shell gnome-terminal gnome-software gnome-tweaks gnome-shell-extension-manager -y
     elif [[ ${answer_gnome_desktop} == "2" ]]; then
     banner
         echo "${G}Installing Gnome Full..."${W}
         echo
-        apt-get install kali-desktop-gnome -y
+        apt-get install kali-desktop-gnome gnome-software gnome-tweaks gnome-shell-extension-manager -y
     elif [[ ${answer_gnome_desktop} == "" ]]; then
     banner
         echo "${G}Installing Gnome Core..."${W}
         echo
-        apt install gnome-shell gnome-terminal -y
+        apt install gnome-shell gnome-terminal gnome-software gnome-tweaks gnome-shell-extension-manager -y
     fi
 	dpkg --configure -a
 	apt --fix-broken install -y
-  banner
-  echo "${Y}Installing Required Packages"${W}
-	packs=(wget curl nautilus nano gedit gnome-software gnome-tweaks gnome-shell-extension-manager tigervnc-standalone-server tigervnc-tools dbus-x11 )
-	for packs_name in "${packs[@]}"; do
-        type -p "$packs_name" &>/dev/null || {
-            echo -e "\n${R} [${W}-${R}]${G} Installing package : ${Y}$packs_name${C}"${W}
-             apt-get install "$packs_name" -y --no-install-recommends
-        }
-    done
     echo -e "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
  if [[ ! -d "$HOME/.vnc" ]]; then
     mkdir -p "$HOME/.vnc"
@@ -279,10 +272,11 @@ fi
 if [[ -e "$HOME/.vnc/xstartup" ]]; then
     rm "$HOME/.vnc/xstartup"
 fi
+echo "$user ALL=(ALL) NOPASSWD: /usr/sbin/service dbus start" | sudo tee -a /etc/sudoers
 cat <<EOF > "$HOME/.vnc/xstartup"
 export XDG_CURRENT_DESKTOP="GNOME"
-service dbus start
-gnome-shell --x11    
+sudo service dbus start
+gnome-shell --x11
 EOF
 chmod +x "$HOME/.vnc/xstartup"
 # mkdir -p "/home/$user/.vnc"
@@ -446,7 +440,7 @@ banner
 }
 
 add_sound() {
-	echo "$(echo "bash ~/.sound" | cat - /data/data/com.termux/files/usr/bin/kali)" > /data/data/com.termux/files/usr/bin/kali
+	echo "$(echo "bash ~/.kali-sound-service" | cat - /data/data/com.termux/files/usr/bin/kali)" > /data/data/com.termux/files/usr/bin/kali
 }
 
 customize() {
