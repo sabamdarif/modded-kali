@@ -11,7 +11,7 @@ clear
 printf "\033[33m       █▄▀ ▄▀█ █░░ █   █▀▄▀█ █▀█ █▀▄\033[0m\n"
 printf "\033[36m       █░█ █▀█ █▄▄ █   █░▀░█ █▄█ █▄▀ \033[0m\n"
 printf "\033[32m   A modded gui of kali\033[0m\n"
-printf "\033[32m            Code by @saba_mdarif \033[0m\n"
+printf "\033[32m            Code by @sabamdarif \033[0m\n"
 
 }
 
@@ -45,7 +45,7 @@ if [ -f "$rootfs_file" ]; then
   echo "${G}File found:${W} ${Y}$filename${W}"
   echo "${B}1) Remove the file${W}"
   echo "${B}2) Rename the file${W}"
-  echo "${B}3) Continue with the file${W}"
+  echo "${B}3) Continue with existing the file${W}"
 
   read -p "${G}Enter your choice (1/2/3): ${W}" choice
 
@@ -160,6 +160,13 @@ add_sound() {
 
     echo "pulseaudio --start --exit-idle-time=-1" > $HOME/.kali-sound-service
     echo "pacmd load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" >> $HOME/.kali-sound-service
+}
+
+setup_termux_x11() {
+    banner
+    echo "${R}[${W}-${R}]${G} Configuring Termux:X11 "${W}
+    pkg install x11-repo -y
+    pkg install termux-x11-nightly -y
 }
 
 notes() {

@@ -33,14 +33,6 @@
    - `bash gui.sh`
    - Now select **KFCE**, **KDE**, **LXDE**, **LXQT** OR **GNOME** Desktop (any one)
 
-<!-- <details>
-<summary><b><code>DEMO IMAGES: </code></b></summary>
-
-|GNOME|LXDE|LXQT|KDE|
-|--|--|--|--|
-|![img](image/demo-gnome.png)|![img](image/demo-lxde.png)|![img](image/demo-lxqt.png)|![img](/image/demo-kde.png)|
-
-</details> -->
 ### DEMO IMAGES:
 <details></br>
 <summary><b><code>Xfce Desktop</code></b></summary>
@@ -72,11 +64,11 @@
 
 6. Install VNC VIEWER Apk on your Device. [Google Play Store](https://play.google.com/store/apps/details?id=com.realvnc.viewer.android&hl=en)
 7. Or, Install NetHunter KeX from [Nethunter Store](https://store.nethunter.com/en/packages/com.offsec.nethunter.kex/)
-
 8. Open VNC VIEWER & Click on + Button & Enter the Address `localhost:1` & Name anything you like
 9. Set the Picture Quality to High for better Quality
 10. Click on Connect & Input the Password
-11. Enjoy :smile:
+11. Install [Termux:x11](https://github.com/termux/termux-x11/releases)
+12. Enjoy :smile:
 
 ### NOTE:
 
@@ -85,11 +77,10 @@
 - **Type `vncstart` to run Vncserver**
 - **Type `vncstop` to stop Vncserver**
 - **Type `vncstop -f` to stop Vncserver forcefully**
+- **Type `kali -tx11start` to Start The Desktop Using Termux:x11**
+- **Type `kali -tx11stop` to Stop Termux:x11**
 - **Type `bash remove.sh` to remove KALI**
 
-### HOW TO USE IT WITH OFFICIAL NETHUNTER:
-- **Install `minimal` or `nano` variant of nethunter**
-- **run:-** `wget https://raw.githubusercontent.com/sabamdarif/modded-kali/main/builder/gui.sh ; bash gui.sh `
 ### ISSUES:
 - **Issue:-** Vnc server related issue like *vnc autostop* , *Apps not showing*
 - **Solution:-** Login into root user using `kali -r` then launch vncserver

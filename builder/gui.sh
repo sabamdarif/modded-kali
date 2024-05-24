@@ -10,7 +10,7 @@ banner() {
 clear
 printf "\033[33m       █▄▀ ▄▀█ █░░ █   █▀▄▀█ █▀█ █▀▄\033[0m\n"
 printf "\033[36m       █░█ █▀█ █▄▄ █   █░▀░█ █▄█ █▄▀ \033[0m\n"
-printf "\033[32m code by @saba_mdrif \033[0m\n"
+printf "\033[32m code by @sabamdrif \033[0m\n"
 printf "\033[32m subscribe my YouTube Channel Hello Android \033[0m\n"
 
 }
@@ -19,9 +19,9 @@ add_user() {
 	  apt autoremove sudo -y
     banner
     read -p $' \e[1;31m[\e[0m\e[1;77m~\e[0m\e[1;31m]\e[0m\e[1;92m Input Username [Lowercase] : \e[0m\e[1;96m\en' user
-    echo -e "${W}"
+    echo "${W}"
     read -p $' \e[1;31m[\e[0m\e[1;77m~\e[0m\e[1;31m]\e[0m\e[1;92m Input Password : \e[0m\e[1;96m\en' pass
-    echo -e "${W}"
+    echo "${W}"
     deluser kali
     useradd -m -s $(which bash) ${user}
     echo "${user}:${pass}" | chpasswd
@@ -29,27 +29,22 @@ add_user() {
     apt install sudo -y
     echo "$user ALL=(ALL:ALL) ALL" >> /etc/sudoers
     #echo "proot-distro login --user $user kali" > /data/data/com.termux/files/usr/bin/kali
-    cat <<EOF > "/data/data/com.termux/files/usr/bin/kali"
-if [ "\$1" = "-r" ]; then
-    proot-distro login kali
-else
-    proot-distro login --user "$user" kali
-fi
-EOF
     #chmod +x /data/data/com.termux/files/usr/bin/kali
     clear
-
+    echo "$user ALL=(ALL) NOPASSWD: /usr/sbin/service dbus start" | sudo tee -a /etc/sudoers
 }
 
 update_sys() {
   echo "${G}Updating System..."${W}
+  echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+  echo "nameserver 8.8.4.4" >> /etc/resolv.conf
   apt-get update
 }
 
 ask() {
   banner
 	echo
-	echo -e "${R} [${W}-${R}]${C} Select Desktop Type"${W}
+	echo "${R} [${W}-${R}]${C} Select Desktop Type"${W}
 	echo
 	echo "${C}1. XFCE4 (recommended)"${W}
 	echo
@@ -67,7 +62,7 @@ ask() {
   banner
   read -p "${G}Do you to install VLC (y/n) "${w} ask_vlc
   sleep 0.5
-  echo -e "${R} [${W}-${R}]${C} Select Browser"${W}
+  echo "${R} [${W}-${R}]${C} Select Browser"${W}
 	echo
 	echo "${C}1. Firefox (recommended)"${W}
 	echo
@@ -95,14 +90,14 @@ install_desktop_type() {
 
 fix_broken() {
     banner
-    echo -e "${Y}Checking error and fix it..."${W}
+    echo "${Y}Checking error and fix it..."${W}
      dpkg --configure -a
      apt-get install --fix-broken keyboard-configuration -y
 }
 
 package() {
   banner
-    echo -e "${R} [${W}-${R}]${C} Checking required packages..."${W}
+    echo "${R} [${W}-${R}]${C} Checking required packages..."${W}
     apt update -y
     apt --fix-broken install udisks2 -y
     rm /var/lib/dpkg/info/udisks2.postinst
@@ -115,7 +110,7 @@ package() {
      dpkg --configure -a
     for packs_name in "${packs[@]}"; do
         type -p "$packs_name" &>/dev/null || {
-            echo -e "\n${R} [${W}-${R}]${G} Installing package : ${Y}$packs_name${C}"${W}
+            echo "\n${R} [${W}-${R}]${G} Installing package : ${Y}$packs_name${C}"${W}
              apt-get install "$packs_name" -y --no-install-recommends
         }
     done
@@ -210,10 +205,10 @@ xfce_mode() {
   add_user
   package
   banner
-	echo -e "${R} [${W}-${R}]${C} Installing XFCE DESKTOP"${W}
+	echo "${R} [${W}-${R}]${C} Installing XFCE DESKTOP"${W}
         apt install xfce4* kali-themes -y
        banner
-       echo -e "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
+       echo "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
   if [[ ! -d "$HOME/.vnc" ]]; then
         mkdir -p "$HOME/.vnc"
     fi
@@ -233,6 +228,7 @@ xfce_mode() {
     mv customuze-my-desktop  /home/${user}/customuze-my-desktop
     chmod +x /home/${user}/customuze-my-desktop
     customize
+    tx11_launch_cmd="sudo service dbus start && export XDG_RUNTIME_DIR=${TMPDIR} && env DISPLAY=:0 startxfce4"
 }
 
 gnome_mode() {
@@ -265,14 +261,13 @@ gnome_mode() {
     fi
 	dpkg --configure -a
 	apt --fix-broken install -y
-    echo -e "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
+    echo "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
  if [[ ! -d "$HOME/.vnc" ]]; then
     mkdir -p "$HOME/.vnc"
 fi
 if [[ -e "$HOME/.vnc/xstartup" ]]; then
     rm "$HOME/.vnc/xstartup"
 fi
-echo "$user ALL=(ALL) NOPASSWD: /usr/sbin/service dbus start" | sudo tee -a /etc/sudoers
 cat <<EOF > "$HOME/.vnc/xstartup"
 export XDG_CURRENT_DESKTOP="GNOME"
 sudo service dbus start
@@ -292,20 +287,21 @@ chmod +x "$HOME/.vnc/xstartup"
   #echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
- echo -e "${R} [${W}-${R}]${C} Fix Vnc Login Issue.."${W}
+ echo "${R} [${W}-${R}]${C} Fix Vnc Login Issue.."${W}
    for file in $(find /usr -type f -iname "*login1*"); do rm -rf $file
    done
    echo "proot-distro login kali" > /data/data/com.termux/files/usr/bin/kali
     apt install zsh zsh-autosuggestions zsh-syntax-highlighting -y
     cp /etc/skel/.zshrc ~/
-     chsh -s $(which zsh) $(whoami)
+    chsh -s $(which zsh) $(whoami)
+  tx11_launch_cmd="sudo service dbus start && export XDG_CURRENT_DESKTOP="GNOME" && env DISPLAY=:0 gnome-shell --x11"
 }
 
 lxde_mode() {
   add_user
   package
   banner
-	echo -e "${R} [${W}-${R}]${C} Installing LXDE DESKTOP"${W}
+	echo "${R} [${W}-${R}]${C} Installing LXDE DESKTOP"${W}
 	 apt install lxde lxterminal kali-themes -y
 	apt-get install udisks2 -y
 	echo " " > /var/lib/dpkg/info/udisks2.postinst
@@ -316,7 +312,7 @@ lxde_mode() {
 	apt-get --fix-broken install -y
 	apt-get clean
 	banner
-	echo -e "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
+	echo "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
   if [[ ! -d "$HOME/.vnc" ]]; then
         mkdir -p "$HOME/.vnc"
     fi
@@ -331,13 +327,14 @@ lxde_mode() {
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
+    tx11_launch_cmd="sudo service dbus start && export XDG_RUNTIME_DIR=${TMPDIR} && env DISPLAY=:0 startlxde"
 }
 
 lxqt_mode(){
   add_user
   package
   banner
-	echo -e "${R} [${W}-${R}]${C} Installing LXQT DESKTOP"${W}
+	echo "${R} [${W}-${R}]${C} Installing LXQT DESKTOP"${W}
 	apt-get install udisks2 -y
 	echo " " > /var/lib/dpkg/info/udisks2.postinst
 	apt-mark hold udisks2
@@ -347,7 +344,7 @@ lxqt_mode(){
 	apt-get --fix-broken install -y
 	apt-get clean
 	 banner
-       echo -e "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
+       echo "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
   if [[ ! -d "$HOME/.vnc" ]]; then
         mkdir -p "$HOME/.vnc"
     fi
@@ -362,13 +359,14 @@ if [[ -e "/bin/vncstart" ]]; then
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
+    tx11_launch_cmd="sudo service dbus start && export XDG_RUNTIME_DIR=${TMPDIR} && env DISPLAY=:0 startlxqt"
 }
 
 kde_mode() {
   add_user
   package
   banner
-	echo -e "${R} [${W}-${R}]${C} Installing KDE DESKTOP"${W}
+	echo "${R} [${W}-${R}]${C} Installing KDE DESKTOP"${W}
 	apt-get install udisks2 -y
 	echo " " > /var/lib/dpkg/info/udisks2.postinst
 	apt-mark hold udisks2
@@ -378,7 +376,7 @@ kde_mode() {
 	apt-get --fix-broken install -y
 	apt-get clean
 	 banner
-       echo -e "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
+       echo "${R} [${W}-${R}]${C} Setting up VNC Server..."${W}
   if [[ ! -d "$HOME/.vnc" ]]; then
         mkdir -p "$HOME/.vnc"
     fi
@@ -393,47 +391,78 @@ kde_mode() {
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
+    tx11_launch_cmd="sudo service dbus start && export XDG_RUNTIME_DIR=${TMPDIR} && env DISPLAY=:0 startplasma-x11"
+}
+
+create_launcher() {
+  echo "${G}Adding Launcher Script" ${W}
+cat <<EOF > "/data/data/com.termux/files/usr/bin/kali"
+#!/data/data/com.termux/files/usr/bin/bash
+if [[ "\$1" = "-r" ]]; then
+    proot-distro login kali
+elif [[ "\$1" = "vncstart" ]]; then
+   proot-distro login kali --user $user --shared-tmp -- /bin/bash -c "vncstart"
+elif [[ "\$1" = "vncstop" ]]; then
+   proot-distro login kali --user $user --shared-tmp -- /bin/bash -c "vncstop"
+elif [[ "\$1" = "tx11start" ]]; then
+  #  proot-distro login kali --user $user --shared-tmp -- /bin/bash -c "tx11start"
+kill -9 $(pgrep -f "termux.x11") 2>/dev/null
+export XDG_RUNTIME_DIR=${TMPDIR}
+termux-x11 :0 >/dev/null &
+sleep 3
+am start --user 0 -n com.termux.x11/com.termux.x11.MainActivity > /dev/null 2>&1
+sleep 1
+proot-distro login kali --user $user --shared-tmp -- /bin/bash -c '${tx11_launch_cmd}'
+exit 0
+elif [[ "\$1" = "tx11stop" ]]; then
+termux_x11_pid=\$(pgrep -f /system/bin/app_process.*com.termux.x11.Loader)
+if [ -n "\$termux_x11_pid" ]; then
+  kill -9 "\$termux_x11_pid" > /dev/null 2>&1
+echo "Termux:X11 Stopped Successfully"
+fi
+else
+    proot-distro login --user "$user" kali
+fi
+EOF
+chmod +x /data/data/com.termux/files/usr/bin/kali
 }
 
 note() {
 banner
-    echo -e " ${G} Successfully Installed !"${W}
+    echo " ${G} Successfully Installed !"${W}
     sleep 1
-    if [[ $select_desktop == "5" ]]; then
+    if [[ $select_desktop == "1" ]]; then
+    echo " ${C}Type ${G}kali${C} to login as normal user"${W}
     echo
-    echo -e " ${C}Type ${G}kali${C} to login into kali cli (as root user)"${W}
+    echo "${C}Then type ${G}./customuze-my-desktop ${C}to finish up the setup"
     echo
-    echo -e " ${C}You cannot add any user in GNOME Desktop"${W}
-    echo
-    echo -e " ${C}You need to use as root user"${W}
-    elif [[ $select_desktop == "1" ]]; then
-    echo -e " ${C}Type ${G}kali${C} to login as normal user"${W}
-    echo
-    echo -e "${C}Then type ${G}./customuze-my-desktop ${C}to finish up the setup"
-    echo
-    echo -e " ${C}Type ${G}kali -r${C} to login as root user"${W}
+    echo " ${C}Type ${G}kali -r${C} to login as root user"${W}
     echo
     else
     echo
-    echo -e " ${C}Type ${G}kali${C} to login as normal user"${W}
+    echo " ${C}Type ${G}kali${C} to login as normal user"${W}
     echo
-    echo -e " ${C}Type ${G}kali -r${C} to login as root user"${W}
+    echo " ${C}Type ${G}kali -r${C} to login as root user"${W}
     echo
     fi
     echo
-    echo -e " ${C}Type ${G}vncstart${C} to run Vncserver."${W}
+    echo " ${C}Type ${G}vncstart${C} to run Vncserver."${W}
     echo
-    echo -e " ${C}Type ${G}vncstop${C} to stop Vncserver."${W}
+    echo " ${C}Type ${G}vncstop${C} to stop Vncserver."${W}
     echo
-    echo -e " ${C}Open VNC VIEWER or Nethunter Kex & Click on + Button."${W}
+    echo " ${C}Open VNC VIEWER or Nethunter Kex & Click on + Button."${W}
     echo
-    echo -e " ${C}Enter the Address localhost:1 & Name anything you like."${W}
+    echo " ${C}Enter the Address localhost:1 & Name anything you like."${W}
     echo
-    echo -e " ${C}Click on Connect & Input the Password."${W}
+    echo " ${C}Click on Connect & Input the Password."${W}
     echo 
-    echo -e " ${C}If you install the GNOME DESKKTOP you may need to use UltraVnc mode in Nethunter Kex."${W}
+    echo " ${C}If you install the GNOME DESKKTOP you may need to use UltraVnc mode in Nethunter Kex."${W}
     echo
-    echo -e " ${C}Enjoy"${W}
+    echo " ${C}Type ${G}tx11start${C} to start Termux X11."${W}
+    echo
+    echo " ${C}Type ${G}tx11stop${C} to stop Termux X11."${W}
+    echo
+    echo " ${C}Enjoy"${W}
     echo
     echo
 
@@ -474,4 +503,5 @@ install_desktop_type
 browser_installer
 vlc_installer
 add_sound
+create_launcher
 note
