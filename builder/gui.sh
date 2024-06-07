@@ -10,8 +10,8 @@ banner() {
 clear
 printf "\033[33m       █▄▀ ▄▀█ █░░ █   █▀▄▀█ █▀█ █▀▄\033[0m\n"
 printf "\033[36m       █░█ █▀█ █▄▄ █   █░▀░█ █▄█ █▄▀ \033[0m\n"
-printf "\033[32m code by @sabamdrif \033[0m\n"
-printf "\033[32m subscribe my YouTube Channel Hello Android \033[0m\n"
+printf "\033[32m   A modded gui of kali\033[0m\n"
+printf "\033[32m   Code by @sabamdarif \033[0m\n"
 
 }
 
@@ -92,7 +92,7 @@ fix_broken() {
     banner
     echo "${Y}Checking error and fix it..."${W}
      dpkg --configure -a
-     apt-get install --fix-broken keyboard-configuration -y
+     apt-get install --fix-broken -y
 }
 
 package() {
@@ -228,7 +228,7 @@ xfce_mode() {
     mv customuze-my-desktop  /home/${user}/customuze-my-desktop
     chmod +x /home/${user}/customuze-my-desktop
     customize
-    tx11_launch_cmd="sudo service dbus start && export XDG_RUNTIME_DIR=${TMPDIR} && env DISPLAY=:0 startxfce4"
+    tx11_launch_cmd="sudo service dbus start && export XDG_RUNTIME_DIR=\${TMPDIR} && env DISPLAY=:0 startxfce4"
 }
 
 gnome_mode() {
@@ -274,9 +274,9 @@ sudo service dbus start
 gnome-shell --x11
 EOF
 chmod +x "$HOME/.vnc/xstartup"
-# mkdir -p "/home/$user/.vnc"
-# cp -r "$HOME/.vnc/xstartup" "/home/$user/.vnc/xstartup"
-# chmod +x "/home/$user/.vnc/xstartup"
+mkdir -p "/home/$user/.vnc"
+cp -r "$HOME/.vnc/xstartup" "/home/$user/.vnc/xstartup"
+chmod +x "/home/$user/.vnc/xstartup"
    if [[ -e "/bin/vncstart" ]]; then
         rm -rf /bin/vncstart
     fi
@@ -327,7 +327,7 @@ lxde_mode() {
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
-    tx11_launch_cmd="sudo service dbus start && export XDG_RUNTIME_DIR=${TMPDIR} && env DISPLAY=:0 startlxde"
+    tx11_launch_cmd="sudo service dbus start && export XDG_RUNTIME_DIR=\${TMPDIR} && env DISPLAY=:0 startlxde"
 }
 
 lxqt_mode(){
@@ -359,7 +359,7 @@ if [[ -e "/bin/vncstart" ]]; then
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
-    tx11_launch_cmd="sudo service dbus start && export XDG_RUNTIME_DIR=${TMPDIR} && env DISPLAY=:0 startlxqt"
+    tx11_launch_cmd="sudo service dbus start && export XDG_RUNTIME_DIR=\${TMPDIR} && env DISPLAY=:0 startlxqt"
 }
 
 kde_mode() {
@@ -391,7 +391,7 @@ kde_mode() {
     echo "export DISPLAY=":1"" >> /etc/profile
     echo "export PULSE_SERVER=127.0.0.1" >> /etc/profile
     source /etc/profile
-    tx11_launch_cmd="sudo service dbus start && export XDG_RUNTIME_DIR=${TMPDIR} && env DISPLAY=:0 startplasma-x11"
+    tx11_launch_cmd="sudo service dbus start && export XDG_RUNTIME_DIR=\${TMPDIR} && env DISPLAY=:0 startplasma-x11"
 }
 
 create_launcher() {
@@ -400,21 +400,20 @@ cat <<EOF > "/data/data/com.termux/files/usr/bin/kali"
 #!/data/data/com.termux/files/usr/bin/bash
 if [[ "\$1" = "-r" ]]; then
     proot-distro login kali
-elif [[ "\$1" = "vncstart" ]]; then
+elif [[ "\$1" = "-vncstart" ]]; then
    proot-distro login kali --user $user --shared-tmp -- /bin/bash -c "vncstart"
-elif [[ "\$1" = "vncstop" ]]; then
+elif [[ "\$1" = "-vncstop" ]]; then
    proot-distro login kali --user $user --shared-tmp -- /bin/bash -c "vncstop"
-elif [[ "\$1" = "tx11start" ]]; then
-  #  proot-distro login kali --user $user --shared-tmp -- /bin/bash -c "tx11start"
-kill -9 $(pgrep -f "termux.x11") 2>/dev/null
-export XDG_RUNTIME_DIR=${TMPDIR}
+elif [[ "\$1" = "-tx11start" ]]; then
+kill -9 \$(pgrep -f "termux.x11") 2>/dev/null
+export XDG_RUNTIME_DIR=\${TMPDIR}
 termux-x11 :0 >/dev/null &
 sleep 3
 am start --user 0 -n com.termux.x11/com.termux.x11.MainActivity > /dev/null 2>&1
 sleep 1
 proot-distro login kali --user $user --shared-tmp -- /bin/bash -c '${tx11_launch_cmd}'
 exit 0
-elif [[ "\$1" = "tx11stop" ]]; then
+elif [[ "\$1" = "-tx11stop" ]]; then
 termux_x11_pid=\$(pgrep -f /system/bin/app_process.*com.termux.x11.Loader)
 if [ -n "\$termux_x11_pid" ]; then
   kill -9 "\$termux_x11_pid" > /dev/null 2>&1
@@ -429,7 +428,7 @@ chmod +x /data/data/com.termux/files/usr/bin/kali
 
 note() {
 banner
-    echo " ${G} Successfully Installed !"${W}
+    echo " ${G} Successfully Installed"${W}
     sleep 1
     if [[ $select_desktop == "1" ]]; then
     echo " ${C}Type ${G}kali${C} to login as normal user"${W}
@@ -458,9 +457,9 @@ banner
     echo 
     echo " ${C}If you install the GNOME DESKKTOP you may need to use UltraVnc mode in Nethunter Kex."${W}
     echo
-    echo " ${C}Type ${G}tx11start${C} to start Termux X11."${W}
+    echo " ${C}Type ${G}kali -tx11start (In Termux)${C} to start Termux X11."${W}
     echo
-    echo " ${C}Type ${G}tx11stop${C} to stop Termux X11."${W}
+    echo " ${C}Type ${G}kali -tx11stop (In Termux)${C} to stop Termux X11."${W}
     echo
     echo " ${C}Enjoy"${W}
     echo

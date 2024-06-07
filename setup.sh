@@ -11,10 +11,9 @@ clear
 printf "\033[33m       █▄▀ ▄▀█ █░░ █   █▀▄▀█ █▀█ █▀▄\033[0m\n"
 printf "\033[36m       █░█ █▀█ █▄▄ █   █░▀░█ █▄█ █▄▀ \033[0m\n"
 printf "\033[32m   A modded gui of kali\033[0m\n"
-printf "\033[32m            Code by @sabamdarif \033[0m\n"
+printf "\033[32m   Code by @sabamdarif \033[0m\n"
 
 }
-
 
 device_arch=$(dpkg --print-architecture)
 
@@ -104,8 +103,6 @@ EOF
 
 }
 
-
-
 check_pack() {
 	banner
 	echo -e "${R} [${W}-${R}]${C} Checking required packages..."${W}
@@ -124,7 +121,6 @@ if [[ `command -v pulseaudio` && `command -v proot-distro` && `command -v wget` 
     fi
 
 }
-
 
 install_rootfs() {
 	banner
@@ -169,11 +165,18 @@ setup_termux_x11() {
     pkg install termux-x11-nightly -y
 }
 
-notes() {
-	echo "proot-distro login kali --bind /dev/null:/proc/sys/kernel/cap_last_last --shared-tmp --fix-low-ports" > $PREFIX/bin/kali
+finish() {
+    echo "proot-distro login kali --bind /dev/null:/proc/sys/kernel/cap_last_last --shared-tmp --fix-low-ports" > $PREFIX/bin/kali
     if [[ -e "$PREFIX/bin/kali" ]]; then
         chmod +x $PREFIX/bin/kali
         termux-reload-settings
+    fi
+    proot-distro login kali -- /bin/bash -c "mv /usr/sbin/telinit /usr/sbin/telinit.bak"
+    proot-distro login kali -- /bin/bash -c "ln -s /usr/bin/true /usr/sbin/telinit"
+}
+
+notes() {
+    if [[ -e "$PREFIX/bin/kali" ]]; then
 	echo -e "\n${R} [${W}-${R}]${G} kali-letest(CLI) is now Installed on your Termux"${W}
         echo -e "\n${R} [${W}-${R}]${G} Type ${C}kali${G} to run kali CLI."${W}
         echo -e "\n${R} [${W}-${R}]${G} If you Want to Use kali in GUI MODE then ,"${W}
@@ -190,5 +193,7 @@ check_pack
 setup_rootfs
 add_distro
 install_rootfs
+setup_termux_x11
 add_sound
+finish
 notes
