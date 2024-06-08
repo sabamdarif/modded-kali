@@ -15,7 +15,7 @@ printf "\033[32m   Code by @sabamdarif \033[0m\n"
 
 }
 
-device_arch=$(dpkg --print-architecture)
+device_arch=$(uname -m)
 
 setup_rootfs(){
     case "$device_arch" in
@@ -139,10 +139,13 @@ install_rootfs() {
         echo -e "\n${R} [${W}-${R}]${G} Error Installing Distro !\n"${W}
         exit 0
     fi
-    if [[ -e "$PREFIX/var/lib/proot-distro/installed-rootfs/kali /root/gui.sh" ]]; then
+    wget https://raw.githubusercontent.com/sabamdarif/modded-kali/main/builder/gui.sh
+    if [[ -e "$PREFIX/var/lib/proot-distro/installed-rootfs/kali/root/gui.sh" ]]; then
+        rm $PREFIX/var/lib/proot-distro/installed-rootfs/kali/root/gui.sh
+        mv gui.sh $PREFIX/var/lib/proot-distro/installed-rootfs/kali/root/gui.sh
         chmod +x $PREFIX/var/lib/proot-distro/installed-rootfs/kali/root/gui.sh
     else
-        cp -f /data/data/com.termux/files/home/modded-kali/builder/gui.sh $PREFIX/var/lib/proot-distro/installed-rootfs/kali/root/gui.sh
+        mv gui.sh $PREFIX/var/lib/proot-distro/installed-rootfs/kali/root/gui.sh
         chmod +x $PREFIX/var/lib/proot-distro/installed-rootfs/kali/root/gui.sh
     fi
 }
@@ -171,6 +174,7 @@ finish() {
         chmod +x $PREFIX/bin/kali
         termux-reload-settings
     fi
+    wget -O $HOME/remove-kali.sh https://raw.githubusercontent.com/sabamdarif/modded-kali/main/remove.sh
     proot-distro login kali -- /bin/bash -c "mv /usr/sbin/telinit /usr/sbin/telinit.bak"
     proot-distro login kali -- /bin/bash -c "ln -s /usr/bin/true /usr/sbin/telinit"
 }

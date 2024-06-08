@@ -25,9 +25,9 @@
 2. Secondly Clone the Repository & Run the setup File
 
    - `pkg update -y && pkg upgrade -y`
-   - `pkg install git wget -y`
-   - `git clone https://github.com/sabamdarif/modded-kali`
-   - `cd modded-kali`
+   - `pkg install wget -y`
+   - `wget https://raw.githubusercontent.com/sabamdarif/modded-kali/main/setup.sh`
+   - `chmod +x setup.sh`
    - `bash setup.sh`
    - `kali`
    - `bash gui.sh`

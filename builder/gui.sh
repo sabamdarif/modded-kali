@@ -396,32 +396,41 @@ kde_mode() {
 
 create_launcher() {
   echo "${G}Adding Launcher Script" ${W}
-cat <<EOF > "/data/data/com.termux/files/usr/bin/kali"
-#!/data/data/com.termux/files/usr/bin/bash
-if [[ "\$1" = "-r" ]]; then
-    proot-distro login kali
-elif [[ "\$1" = "-vncstart" ]]; then
-   proot-distro login kali --user $user --shared-tmp -- /bin/bash -c "vncstart"
-elif [[ "\$1" = "-vncstop" ]]; then
-   proot-distro login kali --user $user --shared-tmp -- /bin/bash -c "vncstop"
-elif [[ "\$1" = "-tx11start" ]]; then
-kill -9 \$(pgrep -f "termux.x11") 2>/dev/null
-export XDG_RUNTIME_DIR=\${TMPDIR}
-termux-x11 :0 >/dev/null &
-sleep 3
-am start --user 0 -n com.termux.x11/com.termux.x11.MainActivity > /dev/null 2>&1
-sleep 1
-proot-distro login kali --user $user --shared-tmp -- /bin/bash -c '${tx11_launch_cmd}'
-exit 0
-elif [[ "\$1" = "-tx11stop" ]]; then
-termux_x11_pid=\$(pgrep -f /system/bin/app_process.*com.termux.x11.Loader)
-if [ -n "\$termux_x11_pid" ]; then
-  kill -9 "\$termux_x11_pid" > /dev/null 2>&1
-echo "Termux:X11 Stopped Successfully"
-fi
-else
-    proot-distro login --user "$user" kali
-fi
+  cat <<EOF > "/data/data/com.termux/files/usr/bin/kali"
+case "\$1" in
+    -r)
+        proot-distro login kali
+        ;;
+    -vncstart)
+        proot-distro login kali --user $user --shared-tmp -- /bin/bash -c "vncstart"
+        ;;
+    -vncstop)
+        proot-distro login kali --user $user --shared-tmp -- /bin/bash -c "vncstop"
+        ;;
+    -tx11start)
+        kill -9 \$(pgrep -f "termux.x11") 2>/dev/null
+        export XDG_RUNTIME_DIR=\${TMPDIR}
+        termux-x11 :0 >/dev/null &
+        sleep 3
+        am start --user 0 -n com.termux.x11/com.termux.x11.MainActivity > /dev/null 2>&1
+        sleep 1
+        proot-distro login kali --user $user --shared-tmp -- /bin/bash -c "${tx11_launch_cmd}"
+        exit 0
+        ;;
+    -tx11stop)
+        termux_x11_pid=\$(pgrep -f /system/bin/app_process.*com.termux.x11.Loader)
+        if [ -n "\$termux_x11_pid" ]; then
+            kill -9 "\$termux_x11_pid" > /dev/null 2>&1
+            echo "Termux:X11 Stopped Successfully"
+        fi
+        ;;
+    -h)
+    echo -e "${G}Use ${C}kali -r ${G}to login as root\n Use ${C}kali -vncstart ${G}to start vncserver\n Use ${C}kali -vncstop ${G}to stop vncserver\n Use ${C}kali -tx11start (In Termux)${G}to start termux:x11\n Use ${C}kali -tx11stop(In Termux) ${G}to stop Termux:x11\n Use ${C}kali -h ${G}to show help"${W}
+    ;;
+    *)
+        proot-distro login --user "$user" kali
+        ;;
+esac
 EOF
 chmod +x /data/data/com.termux/files/usr/bin/kali
 }
