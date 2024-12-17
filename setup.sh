@@ -35,12 +35,15 @@ setup_rootfs(){
             echo "unknown architecture"; exit 1 ;;
     esac
 
-    base_url="https://kali.download/nethunter-images/current/rootfs/kalifs-${archtype}-minimal.tar.xz"
-rootfs_file="kalifs-${archtype}-minimal.tar.xz"
+base_url="https://kali.download/nethunter-images/current/rootfs/kali-nethunter-rootfs-minimal-${archtype}.tar.xz"
+rootfs_file="$(basename $base_url)"
 
 if [ -f "$rootfs_file" ]; then
   local filename="$rootfs_file"
+  echo "${G}File found:${W} ${Y}$filename${W}"
 
+  valid_choise=false
+  while [ "$valid_choice" = false ]; do
   echo "${G}File found:${W} ${Y}$filename${W}"
   echo "${B}1) Remove the file${W}"
   echo "${B}2) Rename the file${W}"
@@ -53,25 +56,28 @@ if [ -f "$rootfs_file" ]; then
       rm "$filename"
       echo "${Y}$filename ${W}${B}File removed.${W}"
       wget "$base_url"
+      valid_choice=true
       ;;
     2)
 	    new_name="kalifs-${archtype}-$(date +%s).tar.xz"
       mv "$rootfs_file" "$new_name"
       echo "$rootfs_file renamed to $new_name."
 	    wget "$base_url"
+        valid_choice=true
       ;;
     3)
       echo "${B}Continuing with the file.${W}"
       wget "$base_url"
+      valid_choice=true
       ;;
     *)
-      echo "Invalid choice. Please try again."
+      echo "${R}Invalid choice. Please try again.${W}"
       ;;
   esac
-
-  get_sha=$(sha256sum "$rootfs_file")
+done
+get_sha=$(sha256sum "$rootfs_file" | cut -d' ' -f1)
 else
-  echo "${R}File not found:${W} ${Y}$rootfs_file${W}"
+  echo "${G}File not found:${W} ${Y}$rootfs_file${W}"
   wget "$base_url"
 get_sha=$(sha256sum "$rootfs_file" | cut -d' ' -f1)
 fi
