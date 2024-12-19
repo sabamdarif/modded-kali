@@ -187,7 +187,7 @@ finish() {
 
 notes() {
     if [[ -e "$PREFIX/bin/kali" ]]; then
-	echo -e "\n${R} [${W}-${R}]${G} kali-letest(CLI) is now Installed on your Termux"${W}
+	echo -e "\n${R} [${W}-${R}]${G} kali-latest(CLI) is now Installed on your Termux"${W}
         echo -e "\n${R} [${W}-${R}]${G} Type ${C}kali${G} to run kali CLI."${W}
         echo -e "\n${R} [${W}-${R}]${G} If you Want to Use kali in GUI MODE then ,"${W}
         echo -e "\n${R} [${W}-${R}]${G} Run ${C}kali${G} first & then type ${C}bash gui.sh "${W}
