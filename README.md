@@ -31,7 +31,7 @@
    - `bash setup.sh`
    - `kali`
    - `bash gui.sh`
-   - Now select **KFCE**, **KDE**, **LXDE**, **LXQT** OR **GNOME** Desktop (any one)
+   - Now select **XFCE**, **KDE**, **LXDE**, **LXQT** OR **GNOME** Desktop (any one)
 
 ### DEMO IMAGES:
 <details></br>
